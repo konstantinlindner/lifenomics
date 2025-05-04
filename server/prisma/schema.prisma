@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  email      String      @unique
+  password   String
+  firstName  String
+  lastName   String
+  birthDate  DateTime?
+  avatarUrl  String?
+  role       UserRole    @default(user)
+  portfolios Portfolio[]
+}
+
+model Portfolio {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  name      String
+  comment   String?
+  assets    Asset[]
+}
+
+model Asset {
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
+  portfolioId  Int
+  ticker       String
+  transactions Transaction[]
+}
+
+enum TransactionType {
+  purchase
+  sale
+}
+
+model Transaction {
+  id              Int             @id @default(autoincrement())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  asset           Asset           @relation(fields: [assetId], references: [id])
+  assetId         Int
+  transactionType TransactionType
+  quantity        Int
+  price           Decimal
+  date            DateTime
+}

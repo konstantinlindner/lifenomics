@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--background: 177 89% 4%;
+		--foreground: 0 0% 98%;
+
+		--primary: 178 67% 42%;
+		--primary-foreground: 0 0% 98%;
+
+		--secondary: 168 61% 18%;
+		--secondary-foreground: 0 0% 98%;
+
+		--accent: 53 100% 40%;
+		--accent-foreground: 10 50% 50%;
+
+		--destructive: 0 84.2% 60.2%;
+
+		--radius: 0.5rem;
+
+		--sidebar-background: 177 89% 4%;
+		--sidebar-foreground: 240 5.3% 80%;
+		--sidebar-primary: 240 5.9% 10%;
+		--sidebar-primary-foreground: 0 0% 98%;
+		--sidebar-accent: 0 0% 100%;
+		--sidebar-accent-foreground: 240 5.9% 10%;
+		--sidebar-border: 220 13% 91%;
+		--sidebar-ring: 217.2 91.2% 59.8%;
+	}
+}
+
+@layer base {
+	h1 {
+		@apply text-4xl font-bold;
+		font-family: 'Alexandria', sans-serif;
+	}
+
+	h2 {
+		@apply text-2xl font-bold leading-9;
+		font-family: 'Alexandria', sans-serif;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-primary;
+	}
+
+	body {
+		@apply bg-background text-foreground;
+	}
+}

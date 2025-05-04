@@ -1,0 +1,37 @@
+{
+	"name": "server",
+	"type": "module",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "tsx src/app.ts",
+		"start": "tsx src/app.ts",
+		"watch": "tsc --watch",
+		"build": "tsc"
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.705.0",
+		"@aws-sdk/s3-request-presigner": "^3.705.0",
+		"@prisma/client": "5.22.0",
+		"@trpc/server": "11.0.0-rc.630",
+		"argon2": "^0.41.1",
+		"cookie-parser": "~1.4.7",
+		"cors": "^2.8.5",
+		"debug": "~2.6.9",
+		"dotenv": "^16.4.5",
+		"express": "~4.16.4",
+		"http-errors": "~1.6.3",
+		"jsonwebtoken": "^9.0.2",
+		"morgan": "^1.10.0"
+	},
+	"devDependencies": {
+		"@types/cookie-parser": "^1.4.8",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^5.0.0",
+		"@types/jsonwebtoken": "^9.0.7",
+		"@types/morgan": "^1.9.9",
+		"@types/node": "^20.17.6",
+		"prisma": "^5.22.0",
+		"tsx": "^4.19.2"
+	}
+}
