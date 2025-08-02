@@ -50,25 +50,6 @@ function SignUp() {
 							</Link>
 						</p>
 					</div>
-
-					<div className='mt-8 text-center'>
-						<p className='text-xs'>
-							By creating an account, you agree to our{' '}
-							<a
-								href='https://mailsign.se/terms-and-conditions'
-								className='hover:text-primary underline'
-							>
-								Terms of Service
-							</a>{' '}
-							and{' '}
-							<a
-								href='https://mailsign.se/privacy-policy'
-								className='hover:text-primary underline'
-							>
-								Privacy Policy
-							</a>
-						</p>
-					</div>
 				</div>
 			</div>
 		</div>
