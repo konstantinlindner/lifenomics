@@ -1,118 +1,112 @@
 import { useEffect, useState } from 'react'
 
-import { invalidateQuery } from '@/clients'
-import { createAsset, getAssetById, getPortfolios, updateAsset } from '@/fetch'
+import { type AssetCreate, assetCreateSchema } from '@lifenomics/shared/schemas'
+
+import { trpc } from '~/clients'
+import { invalidateQuery } from '~/helpers'
+import { FormField, FormItem } from '~/providers'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQuery } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import { PenIcon, PlusIcon, PlusSquareIcon } from 'lucide-react'
 
-import { AlertDialogHeader } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
 import {
+	AlertDialogHeader,
+	Button,
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-	Form,
+	DropdownMenuItem,
 	FormControl,
-	FormField,
-	FormItem,
 	FormLabel,
 	FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
+	Input,
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select'
-import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from '~/components/ui'
 
-import { LoadingIndicator } from '@/components'
+import { LoadingIndicator } from '~/components'
 
 type AssetDialogProps = {
 	assetId?: number // if an assetId is passed in, the component will be in edit mode
-	type?: 'button' | 'button-with-text' | 'sidebar'
-	portfolioId?: number
+	type?: 'button' | 'button-with-text' | 'sidebar' | 'dropdown'
 }
 
-export function AssetDialog({
-	assetId,
-	type = 'sidebar',
-	portfolioId,
-}: AssetDialogProps) {
+export function AssetDialog({ assetId, type = 'sidebar' }: AssetDialogProps) {
 	const [open, setOpen] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 
-	const { data: asset } = useQuery({
-		queryKey: ['getAssetById', assetId],
-		queryFn: () => getAssetById(assetId as number),
-		enabled: !!assetId,
-	})
+	const { data: asset } = useQuery(
+		trpc.asset.getById.queryOptions(assetId as number, {
+			enabled: !!assetId,
+		}),
+	)
+	const { data: exchanges } = useQuery(trpc.exchange.getAll.queryOptions())
+	// const { data: sectors } = useQuery(trpc.sector.getAll.queryOptions())
 
-	const { data: portfolios } = useQuery({
-		queryKey: ['getPortfolios'],
-		queryFn: () => getPortfolios(),
-	})
+	const assetCreator = useMutation(trpc.asset.create.mutationOptions())
+	const assetUpdater = useMutation(trpc.asset.update.mutationOptions())
 
-	const formSchema = z.object({
-		ticker: z.string().trim().min(2),
-		portfolioId: z.number(),
-	})
-
-	type Form = z.infer<typeof formSchema>
-
-	const form = useForm<Form>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<AssetCreate>({
+		resolver: zodResolver(assetCreateSchema),
+		defaultValues: {
+			exchangeId: asset?.exchangeId,
+			ticker: asset?.ticker,
+			type: asset?.type,
+			description: asset?.description ?? undefined,
+			name: asset?.name,
+			// sectorIds: asset?.sectorIds ?? undefined,
+		},
 	})
 
 	useEffect(() => {
 		if (asset) {
 			form.reset({
+				exchangeId: asset.exchangeId,
 				ticker: asset.ticker,
-				portfolioId: asset.portfolioId,
+				type: asset.type,
+				description: asset.description ?? undefined,
+				name: asset.name,
+				// sector: asset.sector ?? undefined,
+				// currencyCode: asset.currencyCode,
 			})
 		}
 	}, [asset, form])
 
-	async function onSubmit(values: Form) {
+	async function onSubmit(values: AssetCreate) {
 		setIsLoading(true)
-
-		const asset =
-			assetId ?
-				await updateAsset({
+		try {
+			if (assetId) {
+				await assetUpdater.mutateAsync({
 					id: assetId,
 					...values,
 				})
-			:	await createAsset({
+			} else {
+				await assetCreator.mutateAsync({
 					...values,
 				})
+			}
 
-		if (!asset) {
-			toast(
-				assetId ?
-					'Could not update asset, please try again'
-				:	'Could not create asset, please try again',
-			)
-
+			await invalidateQuery(trpc.asset.getAll.queryKey())
+			setOpen(false)
+		} catch {
+			if (assetId) {
+				toast('Could not update asset')
+			} else {
+				toast('Could not create asset')
+			}
+		} finally {
 			setIsLoading(false)
-			return
 		}
-
-		await invalidateQuery(['getAssets'])
-		await invalidateQuery(['getAssets', portfolioId])
-
-		setIsLoading(false)
-		setOpen(false)
 	}
 
 	return (
@@ -134,6 +128,15 @@ export function AssetDialog({
 							<span className='ml-2'>Add asset</span>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
+				: type === 'dropdown' ?
+					<DropdownMenuItem
+						onSelect={(event) => {
+							event.preventDefault()
+							setOpen(true)
+						}}
+					>
+						Asset
+					</DropdownMenuItem>
 				:	<Button variant='secondary'>
 						<PlusIcon />
 					</Button>
@@ -146,7 +149,7 @@ export function AssetDialog({
 						{assetId ? 'Edit asset' : 'Add asset'}
 					</DialogTitle>
 				</AlertDialogHeader>
-				<Form {...form}>
+				<FormProvider {...form}>
 					<form
 						className='space-y-2'
 						onSubmit={form.handleSubmit(onSubmit)}
@@ -156,7 +159,7 @@ export function AssetDialog({
 							name='ticker'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Ticker</FormLabel>
+									<FormLabel>Symbol</FormLabel>
 									<FormControl>
 										<Input {...field} placeholder='ID' />
 									</FormControl>
@@ -167,33 +170,30 @@ export function AssetDialog({
 
 						<FormField
 							control={form.control}
-							name='portfolioId'
+							name='exchangeId'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Portfolio</FormLabel>
+									<FormLabel>Exchange</FormLabel>
 									<Select
 										onValueChange={field.onChange}
-										defaultValue={asset?.portfolioId.toString()}
+										defaultValue={asset?.exchangeId.toString()}
 									>
 										<FormControl>
 											<SelectTrigger>
-												<SelectValue placeholder='Choose a portfolio' />
+												<SelectValue placeholder='Choose an exchange' />
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											{(
-												portfolios &&
-												portfolios.length > 0
-											) ?
-												portfolios.map((portfolio) => (
+											{exchanges && exchanges.length > 0 ?
+												exchanges.map((exchange) => (
 													<SelectItem
-														key={portfolio.id}
-														value={portfolio.id.toString()}
+														key={exchange.id}
+														value={exchange.id.toString()}
 													>
-														{portfolio.name}
+														{exchange.name}
 													</SelectItem>
 												))
-											:	<SelectItem value=''>
+											:	<SelectItem value='loading'>
 													Loading...
 												</SelectItem>
 											}
@@ -215,7 +215,7 @@ export function AssetDialog({
 							:	'Save'}
 						</Button>
 					</form>
-				</Form>
+				</FormProvider>
 			</DialogContent>
 		</Dialog>
 	)

@@ -1,15 +1,17 @@
-import { useUser } from '@/contexts'
+import { useUser } from '~/hooks'
 
-import { Link } from 'react-router-dom'
+import { Link } from '@tanstack/react-router'
 
 import { ChevronRightIcon } from 'lucide-react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from '@/components/ui/sidebar'
+} from '~/components/ui'
 
 export function UserItem() {
 	const { user } = useUser()
@@ -24,7 +26,7 @@ export function UserItem() {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
-				<Link to={'profile'}>
+				<Link to={'/profile'}>
 					<SidebarMenuButton
 						size='lg'
 						className='data-[state=open]:bg-sidebar-primary data-[state=open]:text-sidebar-accent-foreground w-full'

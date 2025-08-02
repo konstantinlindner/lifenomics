@@ -1,11 +1,11 @@
 import {
-	HTMLAttributes,
-	TdHTMLAttributes,
-	ThHTMLAttributes,
+	type HTMLAttributes,
+	type TdHTMLAttributes,
+	type ThHTMLAttributes,
 	forwardRef,
 } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
 const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
 	({ className, ...props }, ref) => (

@@ -1,21 +1,19 @@
-import { getAssets } from '@/fetch'
+import { trpc } from '~/clients'
 
 import { useQuery } from '@tanstack/react-query'
 
-import { ErrorItem } from '@/components'
+import { ErrorItem } from '~/components'
 
 import { columns } from './columns'
 import { DataTable } from './data-table'
 
-type AssetTableProps = {
-	portfolioId?: number
-}
-
-export function AssetTable({ portfolioId }: AssetTableProps) {
-	const { data, isPending, isError, error } = useQuery({
-		queryKey: ['getAssets', portfolioId],
-		queryFn: () => getAssets(portfolioId),
-	})
+export function AssetTable() {
+	const {
+		data: assets,
+		isPending,
+		isError,
+		error,
+	} = useQuery(trpc.asset.getAll.queryOptions())
 
 	if (isPending) {
 		return null
@@ -25,5 +23,5 @@ export function AssetTable({ portfolioId }: AssetTableProps) {
 		return <ErrorItem error={error} />
 	}
 
-	return <DataTable columns={columns} data={data} />
+	return <DataTable columns={columns} data={assets} />
 }

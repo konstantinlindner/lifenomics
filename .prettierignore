@@ -1,1 +1,7 @@
-pnpm-lock.yaml
+node_modules/
+dist/
+.DS_Store
+server/prisma/generated/
+.env
+/build/
+.vercel

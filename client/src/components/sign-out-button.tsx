@@ -1,41 +1,32 @@
-import { signOut } from '@/fetch'
-import { cn } from '@/helpers'
+import { trpc } from '~/clients'
+import { cn } from '~/helpers'
 
-import { useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
+import type { ClassValue } from 'clsx'
 
 import { LogOutIcon } from 'lucide-react'
 
-import { SidebarMenuButton } from '@/components/ui/sidebar'
-
 type SignOutButtonProps = {
+	className?: ClassValue
 	showText?: boolean
-	className?: string
 }
 
-export function SignOutButton({ showText, className }: SignOutButtonProps) {
-	const navigate = useNavigate()
+export function SignOutButton({
+	className,
+	showText = false,
+}: SignOutButtonProps) {
+	const router = useRouter()
+	const signOut = useMutation(trpc.user.signOut.mutationOptions())
 
 	async function handleSignOutClick() {
-		await signOut()
-		navigate('/sign-in')
-		navigate(0)
+		await signOut.mutateAsync()
+		await router.invalidate()
 	}
 
 	return (
-		<SidebarMenuButton
-			className={cn(
-				'bg-secondary/60 flex-grow items-center justify-center p-4',
-				className,
-			)}
-			onClick={handleSignOutClick}
-		>
-			{showText && 'Sign out'}
-			<LogOutIcon
-				color='white'
-				width={20}
-				height={20}
-				className={cn(showText && 'ml-3')}
-			/>
-		</SidebarMenuButton>
+		<button className={cn(className)} onClick={handleSignOutClick}>
+			{showText ? 'Log out' : <LogOutIcon />}
+		</button>
 	)
 }

@@ -1,104 +1,29 @@
 import { StrictMode } from 'react'
 
-import { AdminGuard, AuthGuard } from '@/auth'
-import {
-	Admin,
-	Assets,
-	Companies,
-	Dividends,
-	ErrorPage,
-	Home,
-	Portfolio,
-	Portfolios,
-	Profile,
-	Root,
-	SignIn,
-	SignUp,
-	Transactions,
-} from '@/routes'
+import App from '~/App.tsx'
+import { trpcClient } from '~/clients'
+import { routeTree } from '~/routeTree.gen'
 
-import '@/styles/globals.css'
+import '~/styles/globals.css'
 
+import { createRouter } from '@tanstack/react-router'
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter } from 'react-router-dom'
 
-import App from './App.tsx'
+const router = createRouter({
+	routeTree,
+	defaultPreload: 'intent',
+	context: {
+		trpcClient,
+	},
+})
 
-const router = createBrowserRouter([
-	{
-		path: '/',
-		element: (
-			<AuthGuard auth='Require'>
-				<Root />
-			</AuthGuard>
-		),
-		errorElement: (
-			<AuthGuard auth='None'>
-				<ErrorPage />
-			</AuthGuard>
-		),
-		children: [
-			{
-				path: '/',
-				element: <Home />,
-			},
-			{
-				path: 'portfolios',
-				element: <Portfolios />,
-			},
-			{
-				path: 'portfolios/:portfolioId',
-				element: <Portfolio />,
-			},
-			{
-				path: 'assets',
-				element: <Assets />,
-			},
-			{
-				path: 'transactions',
-				element: <Transactions />,
-			},
-			{
-				path: 'dividends',
-				element: <Dividends />,
-			},
-			{
-				path: 'companies',
-				element: <Companies />,
-			},
-			{
-				path: 'admin',
-				element: (
-					<AdminGuard>
-						<Admin />
-					</AdminGuard>
-				),
-			},
-			{
-				path: 'profile',
-				element: <Profile />,
-			},
-		],
-	},
-	{
-		path: 'sign-in',
-		element: (
-			<AuthGuard auth='Forbid'>
-				<SignIn />
-			</AuthGuard>
-		),
-	},
-	{
-		path: 'sign-up',
-		element: (
-			<AuthGuard auth='Forbid'>
-				<SignUp />
-			</AuthGuard>
-		),
-	},
-])
+declare module '@tanstack/react-router' {
+	interface Register {
+		router: typeof router
+	}
+}
 
-const rootElement = document.querySelector('#root')
+const rootElement = document.getElementById('root')
 
 if (!rootElement) {
 	throw new Error('No root element found')

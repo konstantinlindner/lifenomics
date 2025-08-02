@@ -1,8 +1,8 @@
-import { getTransactions } from '@/fetch'
+import { trpc } from '~/clients'
 
 import { useQuery } from '@tanstack/react-query'
 
-import { ErrorItem } from '@/components'
+import { ErrorItem } from '~/components'
 
 import { columns } from './columns'
 import { DataTable } from './data-table'
@@ -13,10 +13,7 @@ export function TransactionTable() {
 		isPending,
 		isError,
 		error,
-	} = useQuery({
-		queryKey: ['getTransactions'],
-		queryFn: () => getTransactions(),
-	})
+	} = useQuery(trpc.transaction.getAll.queryOptions())
 
 	if (isPending) {
 		return null

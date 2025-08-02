@@ -10,17 +10,20 @@
 	"tabWidth": 4,
 	"semi": false,
 	"importOrder": [
-		"^@/env",
+		"^~/env",
 		"^react$",
-		"^@/server/(.*)$",
-		"^@/(?!components$)([^/]+)$",
-		"^@/styles/(.*)$",
+		"^@server/(.*)$",
+		"^@lifenomics/server/(.*)$",
+		"^@lifenomics/shared/(.*)$",
+		"^~/(?!components$)([^/]+)$",
+		"^~/styles/(.*)$",
 		"<THIRD_PARTY_MODULES>",
 		"^lucide-react",
-		"^@/components/ui/(.*)$",
-		"^@/components",
+		"^~/components/ui",
+		"^~/components",
 		"^[./]"
 	],
 	"importOrderSeparation": true,
-	"importOrderSortSpecifiers": true
+	"importOrderSortSpecifiers": true,
+	"tailwindStylesheet": "client/src/styles/globals.css"
 }

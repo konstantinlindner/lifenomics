@@ -1,29 +1,51 @@
-import { env } from '@/env'
+import { env } from '~/env'
 
-import { AppRouter } from '@/server/trpc/routers/appRouter'
+import type { AppRouter } from '@server/trpc'
 
+import { QueryClient } from '@tanstack/react-query'
 import {
 	TRPCClientError,
 	createTRPCClient,
 	httpBatchLink,
 	loggerLink,
 } from '@trpc/client'
+import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
 
-const backendConnectionString = env.VITE_BACKEND_CONNECTION_STRING
+export const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: (failureCount, error) => {
+				if (
+					isTRPCClientError(error) &&
+					error.data?.code === 'UNAUTHORIZED'
+				) {
+					return false
+				}
 
-export const TRPCClient = createTRPCClient<AppRouter>({
+				return failureCount < 3
+			},
+		},
+	},
+})
+
+export const trpcClient = createTRPCClient<AppRouter>({
 	links: [
 		loggerLink(),
 		httpBatchLink({
-			url: `${backendConnectionString}/trpc`,
+			url: `${env.VITE_BACKEND_CONNECTION_STRING}/_`,
 			fetch(url, options) {
 				return fetch(url, {
 					...options,
 					credentials: 'include',
-				})
+				} as RequestInit)
 			},
 		}),
 	],
+})
+
+export const trpc = createTRPCOptionsProxy<AppRouter>({
+	client: trpcClient,
+	queryClient,
 })
 
 export function isTRPCClientError(

@@ -1,8 +1,8 @@
-import { HTMLAttributes } from 'react'
+import type { HTMLAttributes } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
-import { Column } from '@tanstack/react-table'
+import type { Column } from '@tanstack/react-table'
 
 import {
 	ArrowDownIcon,
@@ -11,14 +11,14 @@ import {
 	EyeOffIcon,
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import {
+	Button,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '~/components/ui/'
 
 type ColumnHeaderProps<TData, TValue> = HTMLAttributes<HTMLDivElement> & {
 	column: Column<TData, TValue>
@@ -53,20 +53,26 @@ export function ColumnHeader<TData, TValue>({
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align='start'>
 					<DropdownMenuItem
-						onClick={() => column.toggleSorting(false)}
+						onClick={() => {
+							column.toggleSorting(false)
+						}}
 					>
 						<ArrowUpIcon className='text-muted-foreground/70 mr-2 size-3.5' />
 						Asc
 					</DropdownMenuItem>
 					<DropdownMenuItem
-						onClick={() => column.toggleSorting(true)}
+						onClick={() => {
+							column.toggleSorting(true)
+						}}
 					>
 						<ArrowDownIcon className='text-muted-foreground/70 mr-2 size-3.5' />
 						Desc
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem
-						onClick={() => column.toggleVisibility(false)}
+						onClick={() => {
+							column.toggleVisibility(false)
+						}}
 					>
 						<EyeOffIcon className='text-muted-foreground/70 mr-2 size-3.5' />
 						Hide

@@ -1,52 +1,48 @@
 import { useEffect, useState } from 'react'
 
-import { invalidateQuery } from '@/clients'
 import {
-	createTransaction,
-	getAssets,
-	getTransactionById,
-	updateTransaction,
-} from '@/fetch'
+	type TransactionCreate,
+	transactionCreateSchema,
+} from '@lifenomics/shared/schemas'
+
+import { trpc } from '~/clients'
+import { invalidateQuery, log } from '~/helpers'
+import { FormField, FormItem } from '~/providers'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQuery } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import dayjs from 'dayjs'
+import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import { PenIcon, PlusIcon, PlusSquareIcon } from 'lucide-react'
 
-import { AlertDialogHeader } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
 import {
+	AlertDialogHeader,
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-	Form,
+	DropdownMenuItem,
 	FormControl,
-	FormField,
-	FormItem,
 	FormLabel,
 	FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
+	Input,
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select'
-import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from '~/components/ui'
+import { Button } from '~/components/ui/button'
 
-import { LoadingIndicator } from '@/components'
+import { LoadingIndicator } from '~/components'
 
 type TransactionDialogProps = {
 	transactionId?: number // if an transactionId is passed in, the component will be in edit mode
-	type?: 'button' | 'button-with-text' | 'sidebar'
+	type?: 'button' | 'button-with-text' | 'sidebar' | 'dropdown'
 }
 
 export function TransactionDialog({
@@ -56,29 +52,22 @@ export function TransactionDialog({
 	const [open, setOpen] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 
-	const { data: transaction } = useQuery({
-		queryKey: ['getTransactionById', transactionId],
-		queryFn: () => getTransactionById(transactionId as number),
-		enabled: !!transactionId,
-	})
+	const { data: transaction } = useQuery(
+		trpc.transaction.getById.queryOptions(transactionId as number, {
+			enabled: !!transactionId,
+		}),
+	)
+	const { data: assets } = useQuery(trpc.asset.getAll.queryOptions())
 
-	const { data: assets } = useQuery({
-		queryKey: ['getAssets'],
-		queryFn: () => getAssets(),
-	})
+	const createTransaction = useMutation(
+		trpc.transaction.create.mutationOptions(),
+	)
+	const updateTransaction = useMutation(
+		trpc.transaction.update.mutationOptions(),
+	)
 
-	const formSchema = z.object({
-		assetId: z.number(),
-		transactionType: z.enum(['purchase', 'sale']),
-		quantity: z.number(),
-		price: z.string(),
-		date: z.string(),
-	})
-
-	type Form = z.infer<typeof formSchema>
-
-	const form = useForm<Form>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<TransactionCreate>({
+		resolver: zodResolver(transactionCreateSchema),
 	})
 
 	useEffect(() => {
@@ -86,45 +75,46 @@ export function TransactionDialog({
 			form.reset({
 				assetId: transaction.assetId,
 				transactionType: transaction.transactionType,
-				quantity: transaction.quantity,
-				price: transaction.price,
-				date: transaction.date,
+				quantity: Number(transaction.quantity),
+				price: Number(transaction.price),
+				timestamp: dayjs(transaction.timestamp).toDate(),
 			})
 		}
 	}, [transaction, form])
 
-	async function onSubmit(values: Form) {
+	async function onSubmit(values: TransactionCreate) {
 		setIsLoading(true)
 
-		const transaction =
-			transactionId ?
-				await updateTransaction({
+		try {
+			if (transactionId) {
+				await updateTransaction.mutateAsync({
 					...values,
 					id: transactionId,
-					price: parseFloat(values.price),
 				})
-			:	await createTransaction({
+			} else {
+				await createTransaction.mutateAsync({
 					...values,
-					price: parseFloat(values.price),
 				})
+			}
 
-		if (!transaction) {
+			toast(
+				transactionId ?
+					'Transaction updated successfully'
+				:	'Transaction created successfully',
+			)
+
+			await invalidateQuery(trpc.transaction.getAll.queryKey())
+			setOpen(false)
+		} catch (error) {
+			log(error)
 			toast(
 				transactionId ?
 					'Could not update transaction, please try again'
 				:	'Could not create transaction, please try again',
 			)
-
+		} finally {
 			setIsLoading(false)
-			return
 		}
-
-		await invalidateQuery(['getTransactions'])
-		await invalidateQuery(['getTransactionById', transactionId])
-		await invalidateQuery(['getAssets'])
-
-		setIsLoading(false)
-		setOpen(false)
 	}
 
 	return (
@@ -146,6 +136,15 @@ export function TransactionDialog({
 							<span className='ml-2'>Add transaction</span>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
+				: type === 'dropdown' ?
+					<DropdownMenuItem
+						onSelect={(event) => {
+							event.preventDefault()
+							setOpen(true)
+						}}
+					>
+						Transaction
+					</DropdownMenuItem>
 				:	<Button variant='secondary'>
 						<PlusIcon />
 					</Button>
@@ -158,7 +157,7 @@ export function TransactionDialog({
 						{transactionId ? 'Edit transaction' : 'Add transaction'}
 					</DialogTitle>
 				</AlertDialogHeader>
-				<Form {...form}>
+				<FormProvider {...form}>
 					<form
 						className='space-y-2'
 						onSubmit={form.handleSubmit(onSubmit)}
@@ -204,7 +203,7 @@ export function TransactionDialog({
 														{asset.ticker}
 													</SelectItem>
 												))
-											:	<SelectItem value=''>
+											:	<SelectItem value='loading'>
 													Loading...
 												</SelectItem>
 											}
@@ -226,7 +225,7 @@ export function TransactionDialog({
 							:	'Save'}
 						</Button>
 					</form>
-				</Form>
+				</FormProvider>
 			</DialogContent>
 		</Dialog>
 	)

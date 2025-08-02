@@ -1,6 +1,10 @@
-import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react'
+import {
+	type ComponentPropsWithoutRef,
+	type ElementRef,
+	forwardRef,
+} from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
 import * as LabelPrimitive from '@radix-ui/react-label'
 import { type VariantProps, cva } from 'class-variance-authority'

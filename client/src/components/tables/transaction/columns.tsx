@@ -1,13 +1,13 @@
-import { TransactionRouterOutput } from '@/server/trpc/routers/transactionRouter'
+import type { TransactionRouterOutput } from '@server/trpc/routers/transaction'
 
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 
 import { ArrowUpDownIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '~/components/ui'
 
-import { TransactionDialog } from '@/components'
+import { TransactionDialog } from '~/components'
 
 export const columns: ColumnDef<TransactionRouterOutput['getAll'][number]>[] = [
 	{
@@ -16,9 +16,9 @@ export const columns: ColumnDef<TransactionRouterOutput['getAll'][number]>[] = [
 			return (
 				<Button
 					variant='ghost'
-					onClick={() =>
+					onClick={() => {
 						column.toggleSorting(column.getIsSorted() === 'asc')
-					}
+					}}
 				>
 					Ticker
 					<ArrowUpDownIcon />
@@ -41,9 +41,9 @@ export const columns: ColumnDef<TransactionRouterOutput['getAll'][number]>[] = [
 			return (
 				<Button
 					variant='ghost'
-					onClick={() =>
+					onClick={() => {
 						column.toggleSorting(column.getIsSorted() === 'asc')
-					}
+					}}
 				>
 					Created at
 					<ArrowUpDownIcon />
@@ -64,9 +64,9 @@ export const columns: ColumnDef<TransactionRouterOutput['getAll'][number]>[] = [
 			return (
 				<Button
 					variant='ghost'
-					onClick={() =>
+					onClick={() => {
 						column.toggleSorting(column.getIsSorted() === 'asc')
-					}
+					}}
 				>
 					Updated at
 					<ArrowUpDownIcon />

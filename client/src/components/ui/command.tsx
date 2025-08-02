@@ -1,18 +1,18 @@
 import {
-	ComponentPropsWithoutRef,
-	ElementRef,
-	HTMLAttributes,
+	type ComponentPropsWithoutRef,
+	type ElementRef,
+	type HTMLAttributes,
 	forwardRef,
 } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
-import { type DialogProps } from '@radix-ui/react-dialog'
+import type { DialogProps } from '@radix-ui/react-dialog'
 import { Command as CommandPrimitive } from 'cmdk'
 
 import { SearchIcon } from 'lucide-react'
 
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent } from '~/components/ui/'
 
 const Command = forwardRef<
 	ElementRef<typeof CommandPrimitive>,
@@ -29,9 +29,7 @@ const Command = forwardRef<
 ))
 Command.displayName = CommandPrimitive.displayName
 
-interface CommandDialogProps extends DialogProps {}
-
-const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
+const CommandDialog = ({ children, ...props }: DialogProps) => {
 	return (
 		<Dialog {...props}>
 			<DialogContent className='overflow-hidden p-0 shadow-lg'>

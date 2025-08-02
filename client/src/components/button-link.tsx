@@ -1,15 +1,16 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
-import { Link } from 'react-router-dom'
+import { Link } from '@tanstack/react-router'
+import type { ClassValue } from 'clsx'
 
-import { Button, ButtonProps } from '@/components/ui/button'
+import { Button, type ButtonProps } from '~/components/ui/button'
 
 type ButtonLinkProps = {
 	to: string
 	variant?: ButtonProps['variant']
-	className?: string
+	className?: ClassValue
 	children?: ReactNode
 }
 

@@ -1,16 +1,16 @@
-import { useNavigate } from 'react-router-dom'
+import type { AppRouter } from '@server/trpc'
+
+import type { TRPCClientErrorLike } from '@trpc/client'
 
 import { ServerCrashIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '~/components/ui'
 
 type ErrorItemProps = {
-	error: Error
+	error: Error | TRPCClientErrorLike<AppRouter>
 }
 
 export function ErrorItem({ error }: ErrorItemProps) {
-	const navigate = useNavigate()
-
 	return (
 		<section className='flex flex-col items-center justify-center gap-2'>
 			<ServerCrashIcon className='size-16' />
@@ -20,7 +20,13 @@ export function ErrorItem({ error }: ErrorItemProps) {
 			</h1>
 			<h2 className='text-sm'>Please try reloading the page.</h2>
 
-			<Button onClick={() => navigate(0)}>Reload</Button>
+			<Button
+				onClick={() => {
+					window.location.reload()
+				}}
+			>
+				Reload
+			</Button>
 		</section>
 	)
 }

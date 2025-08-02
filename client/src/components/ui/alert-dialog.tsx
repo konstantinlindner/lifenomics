@@ -1,15 +1,15 @@
 import {
-	ComponentPropsWithoutRef,
-	ElementRef,
-	HTMLAttributes,
+	type ComponentPropsWithoutRef,
+	type ElementRef,
+	type HTMLAttributes,
 	forwardRef,
 } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 
-import { buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '~/components/ui'
 
 const AlertDialog = AlertDialogPrimitive.Root
 
@@ -23,7 +23,7 @@ const AlertDialogOverlay = forwardRef<
 >(({ className, ...props }, ref) => (
 	<AlertDialogPrimitive.Overlay
 		className={cn(
-			'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0  fixed inset-0 z-50 bg-black/80',
+			'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80',
 			className,
 		)}
 		{...props}

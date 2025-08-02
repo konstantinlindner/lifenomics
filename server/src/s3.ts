@@ -1,5 +1,6 @@
+import { env } from '~/env'
+
 import { S3 } from '@aws-sdk/client-s3'
-import { env } from 'src/env'
 
 const accessKeyId = env.AWS_ACCESS_KEY_ID
 const secretAccessKey = env.AWS_SECRET_ACCESS_KEY

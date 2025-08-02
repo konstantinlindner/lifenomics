@@ -1,10 +1,8 @@
-import { ComponentType } from 'react'
+import { useSidebar, useUser } from '~/hooks'
 
-import { useUser } from '@/contexts'
+import { Link } from '@tanstack/react-router'
 
-import { NavLink } from 'react-router-dom'
-
-import { LucideIcon, ShieldUserIcon } from 'lucide-react'
+import { ShieldUserIcon } from 'lucide-react'
 
 import {
 	SidebarGroup,
@@ -13,66 +11,58 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuSubItem,
-	useSidebar,
-} from '@/components/ui/sidebar'
+} from '~/components/ui'
 
-type NavItem = {
-	title: string
-	url?: string
-	component?: ComponentType
-	icon: LucideIcon
-	children?: {
-		title: string
-		url: string
-	}[]
-}
+import { AddEntryDropdown } from './add-entry-dropdown'
+import type { NavItem } from './app-sidebar'
 
 type ItemGroupsProps = Record<string, NavItem[]>
+
 export function ItemGroups({ items }: { items: ItemGroupsProps }) {
 	const { user } = useUser()
 	const { open } = useSidebar()
 
 	return (
 		<>
-			{Object.entries(items).map(([sectionName, sectionItems]) => (
+			{Object.entries(items).map(([sectionName, sectionItems], index) => (
 				<SidebarGroup key={sectionName}>
 					<SidebarGroupLabel>{sectionName}</SidebarGroupLabel>
+					{/* + button rendered only on first section */}
+					{index === 0 && <AddEntryDropdown />}
 					<SidebarMenu>
 						{sectionItems.map((item) => (
 							<SidebarMenuItem key={item.title}>
-								{item.url ?
-									<NavLink
-										to={item.url}
-										className='flex items-center'
-									>
-										{({ isActive }) => (
-											<SidebarMenuButton
-												isActive={isActive}
-											>
-												<item.icon />
-												{open && (
-													<span className='ml-2'>
-														{item.title}
-													</span>
-												)}
-											</SidebarMenuButton>
-										)}
-									</NavLink>
-								: item.component ?
-									<item.component />
-								:	null}
+								<Link
+									to={item.url}
+									className='flex items-center'
+								>
+									{({ isActive }: { isActive: boolean }) => (
+										<SidebarMenuButton isActive={isActive}>
+											<item.icon />
+											{open && (
+												<span className='ml-2'>
+													{item.title}
+												</span>
+											)}
+										</SidebarMenuButton>
+									)}
+								</Link>
 
 								{item.children?.map((subItem) => (
 									<SidebarMenuSubItem key={subItem.title}>
-										<NavLink to={subItem.url}>
-											{({ isActive }) => (
+										<Link to={subItem.url}>
+											{({
+												isActive,
+											}: {
+												isActive: boolean
+											}) => (
 												<SidebarMenuButton
 													isActive={isActive}
 												>
 													{subItem.title}
 												</SidebarMenuButton>
 											)}
-										</NavLink>
+										</Link>
 									</SidebarMenuSubItem>
 								))}
 							</SidebarMenuItem>
@@ -86,12 +76,12 @@ export function ItemGroups({ items }: { items: ItemGroupsProps }) {
 					<SidebarGroupLabel>Admin</SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<NavLink to='/admin'>
+							<Link to='/admin'>
 								<SidebarMenuButton>
 									<ShieldUserIcon />
 									Admin
 								</SidebarMenuButton>
-							</NavLink>
+							</Link>
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarGroup>

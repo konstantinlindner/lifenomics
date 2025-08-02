@@ -1,13 +1,13 @@
-import { AssetRouterOutput } from '@/server/trpc/routers/assetRouter'
+import type { AssetRouterOutput } from '@server/trpc/routers/asset'
 
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 
 import { ArrowUpDownIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '~/components/ui'
 
-import { AssetDialog } from '@/components'
+import { AssetDialog } from '~/components'
 
 export const columns: ColumnDef<AssetRouterOutput['getAll'][number]>[] = [
 	{
@@ -16,9 +16,9 @@ export const columns: ColumnDef<AssetRouterOutput['getAll'][number]>[] = [
 			return (
 				<Button
 					variant='ghost'
-					onClick={() =>
+					onClick={() => {
 						column.toggleSorting(column.getIsSorted() === 'asc')
-					}
+					}}
 				>
 					Ticker
 					<ArrowUpDownIcon />
@@ -41,9 +41,9 @@ export const columns: ColumnDef<AssetRouterOutput['getAll'][number]>[] = [
 			return (
 				<Button
 					variant='ghost'
-					onClick={() =>
+					onClick={() => {
 						column.toggleSorting(column.getIsSorted() === 'asc')
-					}
+					}}
 				>
 					Created at
 					<ArrowUpDownIcon />
@@ -64,9 +64,9 @@ export const columns: ColumnDef<AssetRouterOutput['getAll'][number]>[] = [
 			return (
 				<Button
 					variant='ghost'
-					onClick={() =>
+					onClick={() => {
 						column.toggleSorting(column.getIsSorted() === 'asc')
-					}
+					}}
 				>
 					Updated at
 					<ArrowUpDownIcon />
@@ -84,12 +84,7 @@ export const columns: ColumnDef<AssetRouterOutput['getAll'][number]>[] = [
 	{
 		id: 'edit',
 		cell: ({ row }) => {
-			return (
-				<AssetDialog
-					assetId={row.original.id}
-					portfolioId={row.original.portfolioId}
-				/>
-			)
+			return <AssetDialog assetId={row.original.id} />
 		},
 	},
 ]

@@ -1,74 +1,66 @@
 import { useEffect, useState } from 'react'
 
-import { invalidateQuery } from '@/clients'
 import {
-	createPortfolio,
-	deletePortfolio,
-	getPortfolioById,
-	updatePortfolio,
-} from '@/fetch'
-import { log } from '@/helpers'
+	type PortfolioCreate,
+	portfolioCreateSchema,
+} from '@lifenomics/shared/schemas'
+
+import { trpc } from '~/clients'
+import { invalidateQuery, log } from '~/helpers'
+import { FormField, FormItem } from '~/providers'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Dialog, DialogDescription } from '@radix-ui/react-dialog'
-import { useQuery } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { TRPCClientError } from '@trpc/client'
+import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import { PenIcon, PlusIcon } from 'lucide-react'
 
-import { AlertDialogHeader } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
 import {
+	AlertDialogHeader,
+	Button,
+	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-	Form,
+	DropdownMenuItem,
 	FormControl,
-	FormField,
-	FormItem,
 	FormLabel,
 	FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+	Input,
+} from '~/components/ui'
 
-import { LoadingIndicator } from '@/components'
+import { LoadingIndicator } from '~/components'
 
 type PortfolioDialogProps = {
 	portfolioId?: number // if a portfolioId is passed in, the component will be in edit mode
-	showButtonText?: boolean
+	type?: 'button' | 'button-with-text' | 'sidebar' | 'dropdown'
 }
 
 export function PortfolioDialog({
 	portfolioId,
-	showButtonText = false,
+	type = 'button',
 }: PortfolioDialogProps) {
 	const [open, setOpen] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 
-	const { data: portfolio } = useQuery({
-		queryKey: ['getPortfolioById', portfolioId ?? 0],
-		queryFn: () => getPortfolioById(portfolioId ?? 0),
-	})
+	const { data: portfolio } = useQuery(
+		trpc.portfolio.getById.queryOptions(portfolioId as number, {
+			enabled: !!portfolioId,
+		}),
+	)
 
-	const portfolioInputSchema = z.object({
-		name: z
-			.string()
-			.trim()
-			.min(2, { message: 'The name must be at least 2 characters long' }),
-		comment: z.string().trim().optional(),
-	})
+	const createPortfolio = useMutation(trpc.portfolio.create.mutationOptions())
+	const updatePortfolio = useMutation(trpc.portfolio.update.mutationOptions())
+	const deletePortfolio = useMutation(trpc.portfolio.delete.mutationOptions())
 
-	type PortfolioInput = z.infer<typeof portfolioInputSchema>
-
-	const form = useForm<PortfolioInput>({
-		resolver: zodResolver(portfolioInputSchema),
+	const form = useForm<PortfolioCreate>({
+		resolver: zodResolver(portfolioCreateSchema),
 		defaultValues: {
-			name: portfolio?.name ?? '',
-			comment: portfolio?.comment ?? '',
+			name: portfolio?.name,
+			comment: portfolio?.comment ?? undefined,
 		},
 	})
 
@@ -76,49 +68,56 @@ export function PortfolioDialog({
 		if (portfolio) {
 			form.reset({
 				name: portfolio.name,
-				comment: portfolio.comment ?? '',
+				comment: portfolio.comment ?? undefined,
 			})
 		}
 	}, [portfolio, form])
 
-	async function handleSubmit(values: PortfolioInput) {
+	async function handleSubmit(values: PortfolioCreate) {
 		setIsLoading(true)
 
-		const portfolio =
-			portfolioId ?
-				await updatePortfolio({
+		try {
+			if (portfolioId) {
+				await updatePortfolio.mutateAsync({
 					id: portfolioId,
 					...values,
 				})
-			:	await createPortfolio({
+			} else {
+				await createPortfolio.mutateAsync({
 					...values,
 				})
+			}
 
-		if (!portfolio) {
-			toast(
-				portfolioId ?
-					'Could not update portfolio, try again'
-				:	'Could not create portfolio, try again',
-			)
-
+			await invalidateQuery(trpc.portfolio.getAll.queryKey())
+			setOpen(false)
+		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				toast(error.message)
+			} else {
+				log(error)
+				if (portfolioId) {
+					toast('Could not update portfolio')
+				} else {
+					toast('Could not create portfolio')
+				}
+			}
+		} finally {
 			setIsLoading(false)
-			return
 		}
-
-		await invalidateQuery(['getPortfolios'])
-
-		setIsLoading(false)
-		setOpen(false)
 	}
 
 	async function handleDelete(id: number) {
 		try {
-			await deletePortfolio(id)
-
-			await invalidateQuery(['getPortfolios'])
+			await deletePortfolio.mutateAsync(id)
+			await invalidateQuery(trpc.portfolio.getAll.queryKey())
+			setOpen(false)
 		} catch (error) {
-			log(error)
-			toast('Something went wrong, please try again')
+			if (error instanceof TRPCClientError) {
+				toast(error.message)
+			} else {
+				log(error)
+				toast('Could not delete portfolio')
+			}
 		}
 	}
 
@@ -129,11 +128,20 @@ export function PortfolioDialog({
 					<Button variant='ghost' size='icon'>
 						<PenIcon className='size-4' />
 					</Button>
-				: showButtonText ?
+				: type === 'button-with-text' ?
 					<Button variant='secondary'>
 						<PlusIcon />
 						Create portfolio
 					</Button>
+				: type === 'dropdown' ?
+					<DropdownMenuItem
+						onSelect={(event) => {
+							event.preventDefault()
+							setOpen(true)
+						}}
+					>
+						Portfolio
+					</DropdownMenuItem>
 				:	<Button variant='secondary' className='w-fit'>
 						<PlusIcon />
 					</Button>
@@ -151,7 +159,7 @@ export function PortfolioDialog({
 						You can then link assets to the portfolio
 					</DialogDescription>
 				</AlertDialogHeader>
-				<Form {...form}>
+				<FormProvider {...form}>
 					<form
 						onSubmit={form.handleSubmit(handleSubmit)}
 						className='space-y-2'
@@ -216,7 +224,7 @@ export function PortfolioDialog({
 							</Button>
 						)}
 					</form>
-				</Form>
+				</FormProvider>
 			</DialogContent>
 		</Dialog>
 	)

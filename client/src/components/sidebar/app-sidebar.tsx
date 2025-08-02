@@ -1,14 +1,20 @@
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
+import { useSidebar } from '~/hooks'
+
+import type { LinkProps } from '@tanstack/react-router'
 
 import {
 	BriefcaseBusinessIcon,
 	ChartColumnIcon,
 	ChartPieIcon,
+	DollarSignIcon,
+	FactoryIcon,
+	GlobeIcon,
 	HandCoinsIcon,
+	type LucideIcon,
 	PercentIcon,
-	PlusSquareIcon,
 	ScrollIcon,
 } from 'lucide-react'
 
@@ -18,22 +24,26 @@ import {
 	SidebarFooter,
 	SidebarHeader,
 	SidebarRail,
-	useSidebar,
-} from '@/components/ui/sidebar'
+} from '~/components/ui'
 
-import { AssetDialog, SignOutButton } from '@/components'
+import { SignOutButton } from '~/components'
 
 import { ItemGroups } from './item-groups'
 import { LogoItem } from './logo-item'
 import { UserItem } from './user-item'
 
+export type NavItem = {
+	title: string
+	url: LinkProps['to']
+	icon: LucideIcon
+	children?: {
+		title: string
+		url: LinkProps['to']
+	}[]
+}
+
 const data = {
-	'My portfolio': [
-		{
-			title: 'Add asset',
-			component: AssetDialog,
-			icon: PlusSquareIcon,
-		},
+	'My assets': [
 		{
 			title: 'Home',
 			url: '/',
@@ -46,7 +56,7 @@ const data = {
 		},
 		{
 			title: 'Assets',
-			url: '/assets',
+			url: '/my-assets',
 			icon: ScrollIcon,
 		},
 		{
@@ -62,19 +72,39 @@ const data = {
 	],
 	Explore: [
 		{
-			title: 'Companies',
-			url: '/companies',
+			title: 'Assets',
+			url: '/assets',
+			icon: ScrollIcon,
+		},
+		{
+			title: 'Exchanges',
+			url: '/exchanges',
+			icon: GlobeIcon,
+		},
+		{
+			title: 'Currencies',
+			url: '/currencies',
+			icon: DollarSignIcon,
+		},
+		{
+			title: 'Industries',
+			url: '/industries',
+			icon: FactoryIcon,
+		},
+		{
+			title: 'Sectors',
+			url: '/sectors',
 			icon: BriefcaseBusinessIcon,
 		},
 	],
-}
+} satisfies Record<string, NavItem[]>
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
 	const { open } = useSidebar()
 
 	return (
-		<Sidebar collapsible='icon' {...props} className='px-2 py-4'>
-			<SidebarHeader>
+		<Sidebar collapsible='icon' {...props}>
+			<SidebarHeader className={cn(open && 'p-8')}>
 				<LogoItem />
 			</SidebarHeader>
 			<SidebarContent>

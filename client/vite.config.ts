@@ -1,22 +1,27 @@
-import react from '@vitejs/plugin-react-swc'
-import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react()],
-	resolve: {
-		alias: {
-			'@': path.resolve(__dirname, './src'),
-			'@/auth': path.resolve(__dirname, './src/auth'),
-			'@/clients': path.resolve(__dirname, './src/clients'),
-			'@/components': path.resolve(__dirname, './src/components'),
-			'@/contexts': path.resolve(__dirname, './src/contexts'),
-			'@/fetch': path.resolve(__dirname, './src/fetch'),
-			'@/helpers': path.resolve(__dirname, './src/helpers'),
-			'@/hooks': path.resolve(__dirname, './src/hooks'),
-			'@/routes': path.resolve(__dirname, './src/routes'),
-			'@/styles': path.resolve(__dirname, './src/styles'),
+	plugins: [
+		tanstackRouter({
+			target: 'react',
+			autoCodeSplitting: true,
+		}),
+		react(),
+		tailwindcss(),
+		tsconfigPaths(),
+	],
+	server: {
+		proxy: {
+			'/api': {
+				target: 'http://localhost:3000/_',
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/api/, ''),
+			},
 		},
 	},
 })

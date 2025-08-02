@@ -1,9 +1,9 @@
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
 import { CheckIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import {
+	Button,
 	Command,
 	CommandEmpty,
 	CommandGroup,
@@ -11,12 +11,10 @@ import {
 	CommandItem,
 	CommandList,
 	CommandSeparator,
-} from '@/components/ui/command'
-import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from '@/components/ui/popover'
+} from '~/components/ui'
 
 type FilterPopoverProps = {
 	title: string
@@ -62,7 +60,9 @@ export function FilterPopover({
 								return (
 									<CommandItem
 										key={option}
-										onSelect={() => onSelect(option)}
+										onSelect={() => {
+											onSelect(option)
+										}}
 									>
 										<div
 											className={cn(

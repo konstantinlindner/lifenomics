@@ -13,17 +13,18 @@ enum UserRole {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  email      String      @unique
-  password   String
-  firstName  String
-  lastName   String
-  birthDate  DateTime?
-  avatarUrl  String?
-  role       UserRole    @default(user)
-  portfolios Portfolio[]
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  portfolios  Portfolio[]
+  email       String        @unique
+  password    String
+  firstName   String
+  lastName    String
+  birthDate   DateTime?
+  avatarUrl   String?
+  role        UserRole      @default(user)
+  Transaction Transaction[]
 }
 
 model Portfolio {
@@ -32,19 +33,51 @@ model Portfolio {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
+  assets    Asset[]
   name      String
   comment   String?
-  assets    Asset[]
+}
+
+enum AssetType {
+  stock
+  crypto
+  forex
+  commodity
 }
 
 model Asset {
   id           Int           @id @default(autoincrement())
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  portfolio    Portfolio     @relation(fields: [portfolioId], references: [id])
-  portfolioId  Int
-  ticker       String
+  exchange     Exchange      @relation(fields: [exchangeId], references: [id])
+  exchangeId   Int
+  portfolios   Portfolio[]
   transactions Transaction[]
+  sectors      Sector[]
+  type         AssetType
+  isin         String?
+  ticker       String
+  name         String
+  shortName    String?
+  description  String?
+  imageUrl     String?
+  website      String?
+}
+
+model Exchange {
+  id                Int      @id @default(autoincrement())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  currency          Currency @relation(fields: [currencyId], references: [id])
+  currencyId        Int
+  assets            Asset[]
+  name              String
+  shortName         String?
+  timezoneName      String
+  timezoneShortName String
+  country           String
+  city              String
+  website           String
 }
 
 enum TransactionType {
@@ -58,8 +91,26 @@ model Transaction {
   updatedAt       DateTime        @updatedAt
   asset           Asset           @relation(fields: [assetId], references: [id])
   assetId         Int
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int
   transactionType TransactionType
-  quantity        Int
+  quantity        Decimal
   price           Decimal
-  date            DateTime
+  timestamp       DateTime
+}
+
+model Currency {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  exchanges Exchange[]
+  name      String
+}
+
+model Sector {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assets    Asset[]
+  name      String
 }

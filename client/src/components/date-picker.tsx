@@ -1,19 +1,19 @@
 import { useState } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
 import dayjs from 'dayjs'
 
 import { CalendarIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Input } from '@/components/ui/input'
 import {
+	Button,
+	Calendar,
+	Input,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from '@/components/ui/popover'
+} from '~/components/ui'
 
 type DatePickerProps = {
 	fromYear: number
@@ -86,7 +86,7 @@ export function DatePicker({
 			<PopoverContent align='end' className='w-auto p-0'>
 				<Calendar
 					mode='single'
-					captionLayout='dropdown-buttons'
+					captionLayout='dropdown'
 					selected={date}
 					defaultMonth={date}
 					onSelect={(selectedDate) => {
@@ -98,8 +98,8 @@ export function DatePicker({
 						setStringDate(dayjs(selectedDate).format('DD/MM/YYYY'))
 						// setErrorMessage('');
 					}}
-					fromYear={fromYear}
-					toYear={toYear}
+					startMonth={new Date(fromYear, 0)}
+					endMonth={new Date(toYear, 0)}
 				/>
 			</PopoverContent>
 		</Popover>

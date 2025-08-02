@@ -1,4 +1,4 @@
-import { Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
 
 import {
 	ChevronLeftIcon,
@@ -7,14 +7,14 @@ import {
 	ChevronsRightIcon,
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import {
+	Button,
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select'
+} from '~/components/ui'
 
 type PaginationProps<TData> = {
 	table: Table<TData>
@@ -61,7 +61,9 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
 					<Button
 						variant='default'
 						className='hidden p-0 lg:flex lg:size-8'
-						onClick={() => table.setPageIndex(0)}
+						onClick={() => {
+							table.setPageIndex(0)
+						}}
 						disabled={!table.getCanPreviousPage()}
 					>
 						<span className='sr-only'>Go to first page</span>
@@ -70,7 +72,9 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
 					<Button
 						variant='default'
 						className='size-6 p-0 lg:size-8'
-						onClick={() => table.previousPage()}
+						onClick={() => {
+							table.previousPage()
+						}}
 						disabled={!table.getCanPreviousPage()}
 					>
 						<span className='sr-only'>Go to previous page</span>
@@ -79,7 +83,9 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
 					<Button
 						variant='default'
 						className='size-6 p-0 lg:size-8'
-						onClick={() => table.nextPage()}
+						onClick={() => {
+							table.nextPage()
+						}}
 						disabled={!table.getCanNextPage()}
 					>
 						<span className='sr-only'>Go to next page</span>
@@ -88,9 +94,9 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
 					<Button
 						variant='default'
 						className='hidden size-8 p-0 lg:flex'
-						onClick={() =>
+						onClick={() => {
 							table.setPageIndex(table.getPageCount() - 1)
-						}
+						}}
 						disabled={!table.getCanNextPage()}
 					>
 						<span className='sr-only'>Go to last page</span>

@@ -1,8 +1,8 @@
-import { Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
 
 import { XIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '~/components/ui'
 
 type ResetFilterProps<TData> = {
 	table: Table<TData>
@@ -16,7 +16,9 @@ export function ResetFilter<TData>({ table }: ResetFilterProps<TData>) {
 			{isFiltered && (
 				<Button
 					variant='ghost'
-					onClick={() => table.resetColumnFilters()}
+					onClick={() => {
+						table.resetColumnFilters()
+					}}
 					className='h-8 px-2 lg:px-3'
 				>
 					Reset

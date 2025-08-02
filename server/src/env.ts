@@ -1,12 +1,10 @@
 import { createEnv } from '@t3-oss/env-core'
-import { config } from 'dotenv'
+import 'dotenv/config'
 import { z } from 'zod'
-
-// load env variables from .env file
-config()
 
 export const env = createEnv({
 	server: {
+		NODE_ENV: z.enum(['development', 'production']),
 		PORT: z.coerce.number().int().min(1).max(65535),
 		DATABASE_URL: z.string().url(),
 		FRONTEND_URL: z.string().url(),
@@ -16,8 +14,6 @@ export const env = createEnv({
 		AWS_SECRET_ACCESS_KEY: z.string().min(1),
 		AWS_S3_BUCKET_NAME: z.string().min(1),
 	},
-
 	runtimeEnv: process.env,
-
 	emptyStringAsUndefined: true,
 })

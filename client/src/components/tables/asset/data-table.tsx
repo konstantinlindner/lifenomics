@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 import {
-	ColumnDef,
-	ColumnFiltersState,
-	SortingState,
+	type ColumnDef,
+	type ColumnFiltersState,
+	type SortingState,
 	flexRender,
 	getCoreRowModel,
 	getFacetedUniqueValues,
@@ -15,17 +15,17 @@ import {
 
 import { ListFilterIcon, ScrollIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import {
+	Button,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
-} from '@/components/ui/table'
+} from '~/components/ui'
 
-import { AssetDialog } from '@/components'
+import { AssetDialog } from '~/components'
 
 import { Filter } from '../components/filter'
 import { Pagination } from '../components/pagination'
@@ -72,9 +72,9 @@ export function DataTable<TData, TValue>({
 					<div className='flex items-center gap-2'>
 						<Button
 							size={'icon'}
-							onClick={() =>
+							onClick={() => {
 								setIsFilterPanelOpen(!isFilterPanelOpen)
-							}
+							}}
 						>
 							<ListFilterIcon />
 						</Button>

@@ -1,6 +1,6 @@
-import { TextareaHTMLAttributes, forwardRef } from 'react'
+import { type TextareaHTMLAttributes, forwardRef } from 'react'
 
-import { cn } from '@/helpers'
+import { cn } from '~/helpers'
 
 const Textarea = forwardRef<
 	HTMLTextAreaElement,

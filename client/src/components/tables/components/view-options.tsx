@@ -1,16 +1,16 @@
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import { Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
 
 import { Settings2Icon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import {
+	Button,
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
+	DropdownMenuTrigger,
+} from '~/components/ui'
 
 type ViewOptionsProps<TData> = {
 	table: Table<TData>
@@ -41,9 +41,9 @@ export function ViewOptions<TData>({ table }: ViewOptionsProps<TData>) {
 								key={column.id}
 								className='capitalize'
 								checked={column.getIsVisible()}
-								onCheckedChange={(value) =>
+								onCheckedChange={(value) => {
 									column.toggleVisibility(!!value)
-								}
+								}}
 							>
 								{column.id}
 							</DropdownMenuCheckboxItem>

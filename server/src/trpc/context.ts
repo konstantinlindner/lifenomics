@@ -1,61 +1,50 @@
-import { User } from '@prisma/client'
-import { Request, Response } from 'express'
-import prisma from 'src/prisma'
-import { s3 } from 'src/s3'
-import { verifyJwt } from 'src/utils/jwt'
+import { prisma } from '~/prisma'
+import { s3 } from '~/s3'
+import { verifyJwt } from '~/utils'
 
-type CreateContextProps = {
-	req: Request
-	res: Response
-}
+import type { User } from '@prisma/client'
+import { Request, Response } from '@tinyhttp/app'
+import { z } from 'zod'
 
-type CreateContextReturn = CreateContextProps & {
+type CreateContextReturn = {
 	prisma: typeof prisma
 	s3: typeof s3
 	user: User | null
+	res: Response
 }
 
-export async function createContext({
-	req,
-	res,
-}: CreateContextProps): Promise<CreateContextReturn> {
-	const sessionToken = req.cookies['ln_session_token'] as string | undefined
-
-	if (!sessionToken) {
-		return {
-			prisma,
-			s3,
-			user: null,
-			req,
-			res,
-		}
-	}
-
-	const jwtPayload = verifyJwt(sessionToken)
-
-	if (!jwtPayload?.userId) {
-		return {
-			prisma,
-			s3,
-			user: null,
-			req,
-			res,
-		}
-	}
-
-	const user = await prisma.user.findUnique({
-		where: {
-			id: jwtPayload.userId,
-		},
-	})
+export async function createContext(args: {
+	req: Request
+	res: Response
+}): Promise<CreateContextReturn> {
+	const user = await getUser(args.req)
 
 	return {
 		prisma,
 		s3,
 		user,
-		req,
-		res,
+		res: args.res,
 	}
+}
+
+async function getUser(req: Request) {
+	const sessionToken = z.string().safeParse(req.cookies.ln_session_token)
+
+	if (!sessionToken.success) {
+		return null
+	}
+
+	const userId = verifyJwt(sessionToken.data)
+
+	if (!userId) {
+		return null
+	}
+
+	return await prisma.user.findUnique({
+		where: {
+			id: userId,
+		},
+	})
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>

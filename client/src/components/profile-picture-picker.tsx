@@ -1,31 +1,42 @@
-import { ChangeEvent, useState } from 'react'
+import { type ChangeEvent, useState } from 'react'
 
-import { useUser } from '@/contexts'
-import {
-	getProfileImageFolderUrl,
-	getProfileImageUploadUrl,
-	updateUser,
-} from '@/fetch'
+import { trpc } from '~/clients'
+import { log } from '~/helpers'
+import { useUser } from '~/hooks'
 
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { TRPCClientError } from '@trpc/client'
 import dayjs from 'dayjs'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { PencilIcon } from 'lucide-react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTrigger,
+	Input,
+	Label,
+} from '~/components/ui'
 
-import { LoadingIndicator } from '@/components'
+import { LoadingIndicator } from './loading-indicator'
 
 export function ProfilePicturePicker() {
-	const navigate = useNavigate()
 	const { user } = useUser()
 	const [open, setOpen] = useState(false)
 	const [isUploading, setIsUploading] = useState(false)
+
+	const { data: profileImageFolderUrl } = useQuery(
+		trpc.user.getProfileImageFolderUrl.queryOptions(),
+	)
+	const updateUser = useMutation(trpc.user.update.mutationOptions())
+	const getProfileImageUploadUrl = useMutation(
+		trpc.user.getProfileImageUploadUrl.mutationOptions(),
+	)
 
 	if (!user) {
 		return
@@ -37,53 +48,63 @@ export function ProfilePicturePicker() {
 	const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
 		setIsUploading(true)
 
-		const file = event.target.files?.[0]
-		if (!file) {
-			return
-		}
+		try {
+			const file = event.target.files?.[0]
+			if (!file) {
+				return
+			}
 
-		if (file.size > 10 * 1024 * 1024) {
+			if (file.size > 10 * 1024 * 1024) {
+				setIsUploading(false)
+				toast('The image must be smaller than 10MB')
+				return
+			}
+
+			const dateTime = dayjs().format('YYYY-MM-DD-HH-mm-ss')
+
+			const presignedUrl =
+				await getProfileImageUploadUrl.mutateAsync(dateTime)
+
+			if (!presignedUrl) {
+				setIsUploading(false)
+				toast('Något gick fel, försök igen')
+				return
+			}
+
+			const response = await fetch(presignedUrl, {
+				method: 'PUT',
+				body: file,
+			})
+
+			if (!response.ok) {
+				setIsUploading(false)
+				toast('Something went wrong, please try again')
+				return
+			}
+
+			if (!profileImageFolderUrl) {
+				setIsUploading(false)
+				toast('Something went wrong, please try again')
+				return
+			}
+
+			await updateUser.mutateAsync({
+				avatarUrl: `${profileImageFolderUrl}${dateTime}`,
+			})
+
+			setOpen(false)
+			window.location.reload()
+		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				toast(error.message)
+				return
+			}
+
+			log(error)
+			toast('Something went wrong, please try again')
+		} finally {
 			setIsUploading(false)
-			toast('Bilden får inte vara större än 10MB')
-			return
 		}
-
-		const dateTime = dayjs().format('YYYY-MM-DD-HH-mm-ss')
-
-		const presignedUrl = await getProfileImageUploadUrl(dateTime)
-
-		if (!presignedUrl) {
-			setIsUploading(false)
-			toast('Något gick fel, försök igen')
-			return
-		}
-
-		const response = await fetch(presignedUrl, {
-			method: 'PUT',
-			body: file,
-		})
-
-		if (!response.ok) {
-			setIsUploading(false)
-			toast('Something went wrong, try again')
-			return
-		}
-
-		const folderUrl = await getProfileImageFolderUrl()
-
-		if (!folderUrl) {
-			setIsUploading(false)
-			toast('Something went wrong, try again')
-			return
-		}
-
-		await updateUser({
-			avatarUrl: `${folderUrl}${dateTime}`,
-		})
-
-		setIsUploading(false)
-		setOpen(false)
-		navigate(0)
 	}
 
 	return (

@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 export const env = createEnv({
 	clientPrefix: 'VITE_',
-
 	client: {
 		VITE_BACKEND_CONNECTION_STRING: z
 			.string()
@@ -13,8 +12,6 @@ export const env = createEnv({
 				'You forgot to change the default backend connection string',
 			),
 	},
-
 	runtimeEnv: import.meta.env,
-
 	emptyStringAsUndefined: true,
 })

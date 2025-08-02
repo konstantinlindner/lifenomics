@@ -2,8 +2,7 @@ import { useState } from 'react'
 
 import { XIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import { Button, Dialog, DialogContent, DialogTrigger } from '~/components/ui'
 
 type DeleteDialogProps = {
 	handleClick: () => Promise<void>

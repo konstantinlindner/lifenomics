@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"strict": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"noEmit": true,
+		"composite": true,
+		"rootDir": ".",
+		"baseUrl": "."
+	},
+	"include": ["schemas/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,4 @@
+api.lifenomics.app {
+    reverse_proxy backend:3005
+    encode zstd gzip
+} 

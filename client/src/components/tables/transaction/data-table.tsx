@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 import {
-	ColumnDef,
-	ColumnFiltersState,
-	SortingState,
+	type ColumnDef,
+	type ColumnFiltersState,
+	type SortingState,
 	flexRender,
 	getCoreRowModel,
 	getFacetedUniqueValues,
@@ -15,17 +15,17 @@ import {
 
 import { ListFilterIcon, ScrollIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import {
+	Button,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
-} from '@/components/ui/table'
+} from '~/components/ui'
 
-import { AssetDialog } from '@/components'
+import { TransactionDialog } from '~/components'
 
 import { Filter } from '../components/filter'
 import { Pagination } from '../components/pagination'
@@ -72,9 +72,9 @@ export function DataTable<TData, TValue>({
 					<div className='flex items-center gap-2'>
 						<Button
 							size={'icon'}
-							onClick={() =>
+							onClick={() => {
 								setIsFilterPanelOpen(!isFilterPanelOpen)
-							}
+							}}
 						>
 							<ListFilterIcon />
 						</Button>
@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
 						<ResetFilter table={table} />
 					</div>
 				</div>
-				<AssetDialog type='button' />
+				<TransactionDialog type='button' />
 			</div>
 			{isFilterPanelOpen && (
 				<div>
@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
 					</div>
 				</div>
 			)}
-			<Wrapper icon={<ScrollIcon />} tableName={'Assets'}>
+			<Wrapper icon={<ScrollIcon />} tableName={'Transactions'}>
 				<Table className='border-b border-t'>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (

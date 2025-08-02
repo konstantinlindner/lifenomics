@@ -1,21 +1,14 @@
-import { Link } from 'react-router-dom'
+import { Link } from '@tanstack/react-router'
 
-import { SidebarMenu, useSidebar } from '@/components/ui/sidebar'
+import { SidebarMenu } from '~/components/ui'
 
-import { Logo } from '@/components'
+import { Logo } from '~/components'
 
 export function LogoItem() {
-	const { open } = useSidebar()
-
 	return (
 		<SidebarMenu>
-			<Link
-				to={'/'}
-				className='mb-4 flex h-8 items-center justify-center'
-			>
-				{open ?
-					<Logo />
-				:	<Logo hideText />}
+			<Link to={'/'} className='flex items-center justify-center'>
+				<Logo />
 			</Link>
 		</SidebarMenu>
 	)

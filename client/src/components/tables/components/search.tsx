@@ -1,8 +1,8 @@
-import { Column } from '@tanstack/react-table'
+import type { Column } from '@tanstack/react-table'
 
 import { SearchIcon } from 'lucide-react'
 
-import { Input } from '@/components/ui/input'
+import { Input } from '~/components/ui'
 
 type SearchProps<TData, TValue> = {
 	column?: Column<TData, TValue>

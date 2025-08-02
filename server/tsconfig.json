@@ -2,26 +2,20 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"allowImportingTsExtensions": true,
-		"skipLibCheck": true,
-		"allowJs": false,
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
 		"strict": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
+		"moduleResolution": "Bundler",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"outDir": "dist",
+		"emitDeclarationOnly": true,
 		"composite": true,
-		"baseUrl": ".",
+		"rootDir": ".",
 		"paths": {
-			"@/*": ["/*"],
-			"@shared/*": ["../shared/*"],
+			"~/*": ["./src/*"],
+			"~/routers": ["./src/trpc/routers"],
 			"@prisma/client": ["./prisma/generated"]
-		},
-		"outDir": "./dist",
-		"emitDeclarationOnly": true
+		}
 	},
-	"include": ["src"],
-	"references": []
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
 }
