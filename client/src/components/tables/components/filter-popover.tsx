@@ -32,18 +32,17 @@ export function FilterPopover({
 	selectedValues,
 	onSelect,
 	onReset,
-	placeholder = `Sök ${title}...`,
+	placeholder = `Search ${title}...`,
 	facets,
 }: FilterPopoverProps) {
 	return (
 		<Popover>
 			<PopoverTrigger>
 				<Button
-					size={'sm'}
+					variant='outline'
 					className={cn(
 						selectedValues.size > 0 &&
 							'border-secondary border border-dashed bg-transparent',
-						'',
 					)}
 				>
 					{title}

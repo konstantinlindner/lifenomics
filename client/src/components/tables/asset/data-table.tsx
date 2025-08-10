@@ -71,7 +71,8 @@ export function DataTable<TData, TValue>({
 
 					<div className='flex items-center gap-2'>
 						<Button
-							size={'icon'}
+							variant='outline'
+							size='icon'
 							onClick={() => {
 								setIsFilterPanelOpen(!isFilterPanelOpen)
 							}}
@@ -86,7 +87,6 @@ export function DataTable<TData, TValue>({
 			</div>
 			{isFilterPanelOpen && (
 				<div>
-					<h3 className='mb-4 text-lg font-semibold'>Filter:</h3>
 					<div className='flex flex-wrap gap-4'>
 						<Filter table={table} filter={'ticker'} />
 						<Filter table={table} filter={'portfolioId'} />

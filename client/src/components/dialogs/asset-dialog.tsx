@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { type AssetCreate, assetCreateSchema } from '@lifenomics/shared/schemas'
+import { type AssetCreate, assetCreate } from '@lifenomics/shared/schemas'
 
 import { trpc } from '~/clients'
 import { invalidateQuery } from '~/helpers'
@@ -57,7 +57,7 @@ export function AssetDialog({ assetId, type = 'sidebar' }: AssetDialogProps) {
 	const assetUpdater = useMutation(trpc.asset.update.mutationOptions())
 
 	const form = useForm<AssetCreate>({
-		resolver: zodResolver(assetCreateSchema),
+		resolver: zodResolver(assetCreate),
 		defaultValues: {
 			exchangeId: asset?.exchangeId,
 			ticker: asset?.ticker,
@@ -137,7 +137,7 @@ export function AssetDialog({ assetId, type = 'sidebar' }: AssetDialogProps) {
 					>
 						Asset
 					</DropdownMenuItem>
-				:	<Button variant='secondary'>
+				:	<Button variant='outline' size='icon'>
 						<PlusIcon />
 					</Button>
 				}
@@ -208,7 +208,6 @@ export function AssetDialog({ assetId, type = 'sidebar' }: AssetDialogProps) {
 							disabled={isLoading}
 							type='submit'
 							className='w-full'
-							variant={'secondary'}
 						>
 							{isLoading ?
 								<LoadingIndicator size='sm' />

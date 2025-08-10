@@ -1,7 +1,7 @@
 import {
-	idSchema,
-	transactionCreateSchema,
-	transactionUpdateSchema,
+	id,
+	transactionCreate,
+	transactionUpdate,
 } from '@lifenomics/shared/schemas'
 
 import { prisma } from '~/prisma'
@@ -26,19 +26,17 @@ export const transaction = router({
 		})
 	}),
 
-	getById: protectedProcedure
-		.input(idSchema)
-		.query(async ({ input, ctx }) => {
-			return await prisma.transaction.findUnique({
-				where: {
-					id: input,
-					userId: ctx.user.id,
-				},
-			})
-		}),
+	getById: protectedProcedure.input(id).query(async ({ input, ctx }) => {
+		return await prisma.transaction.findUnique({
+			where: {
+				id: input,
+				userId: ctx.user.id,
+			},
+		})
+	}),
 
 	create: protectedProcedure
-		.input(transactionCreateSchema)
+		.input(transactionCreate)
 		.mutation(async ({ input, ctx }) => {
 			const { assetId, transactionType, quantity, price, timestamp } =
 				input
@@ -77,7 +75,7 @@ export const transaction = router({
 		}),
 
 	update: protectedProcedure
-		.input(transactionUpdateSchema)
+		.input(transactionUpdate)
 		.mutation(async ({ input, ctx }) => {
 			const { id, transactionType, quantity, price, timestamp } = input
 
@@ -95,16 +93,14 @@ export const transaction = router({
 			})
 		}),
 
-	delete: protectedProcedure
-		.input(idSchema)
-		.mutation(async ({ input, ctx }) => {
-			await prisma.transaction.delete({
-				where: {
-					userId: ctx.user.id,
-					id: input,
-				},
-			})
-		}),
+	delete: protectedProcedure.input(id).mutation(async ({ input, ctx }) => {
+		await prisma.transaction.delete({
+			where: {
+				userId: ctx.user.id,
+				id: input,
+			},
+		})
+	}),
 })
 
 export type TransactionRouter = typeof transaction

@@ -1,10 +1,10 @@
 import { env } from '~/env'
 
 import {
-	idSchema,
-	signInSchema,
-	signUpSchema,
-	userUpdateSchema,
+	id,
+	userSignIn,
+	userSignUp,
+	userUpdate,
 } from '@lifenomics/shared/schemas'
 
 import { prisma } from '~/prisma'
@@ -23,7 +23,7 @@ import { protectedProcedure, publicProcedure, router } from '../trpc'
 
 export const user = router({
 	signIn: publicProcedure
-		.input(signInSchema)
+		.input(userSignIn)
 		.mutation(async ({ input, ctx }) => {
 			const { email, password } = input
 
@@ -63,7 +63,7 @@ export const user = router({
 		}),
 
 	signUp: publicProcedure
-		.input(signUpSchema)
+		.input(userSignUp)
 		.mutation(async ({ input, ctx }) => {
 			const { firstName, lastName, email, password } = input
 
@@ -130,7 +130,7 @@ export const user = router({
 	}),
 
 	update: protectedProcedure
-		.input(userUpdateSchema)
+		.input(userUpdate)
 		.mutation(async ({ input, ctx }) => {
 			const user = await prisma.user.update({
 				where: {
@@ -161,7 +161,7 @@ export const user = router({
 		return imageUrl
 	}),
 
-	getById: protectedProcedure.input(idSchema).query(async ({ input }) => {
+	getById: protectedProcedure.input(id).query(async ({ input }) => {
 		const user = await prisma.user.findUnique({
 			where: {
 				id: input,

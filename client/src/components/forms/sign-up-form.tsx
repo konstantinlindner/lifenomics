@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import { type UserSignUp, userSignUp } from '@lifenomics/shared/schemas'
+
 import { isTRPCClientError, trpc } from '~/clients'
 import { log } from '~/helpers'
 import { FormField, FormItem } from '~/providers'
@@ -9,7 +11,6 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import {
 	Button,
@@ -21,47 +22,22 @@ import {
 
 import { LoadingIndicator } from '~/components'
 
-const formSchema = z.object({
-	firstName: z
-		.string({
-			required_error: 'First name is required',
-		})
-		.trim()
-		.min(2, {
-			message: 'First name should be at least 2 characters long',
-		}),
-	lastName: z
-		.string({
-			required_error: 'Last name is required',
-		})
-		.trim()
-		.min(2, {
-			message: 'Last name should be at least 2 characters long',
-		}),
-	email: z
-		.string({
-			required_error: 'Email is required',
-		})
-		.trim()
-		.email(),
-	password: z
-		.string({
-			required_error: 'Password is required',
-		})
-		.min(8, {
-			message: 'Password should be at least 8 characters long',
-		}),
-})
-
 export function SignUpForm() {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-	})
 	const signUp = useMutation(trpc.user.signUp.mutationOptions())
 
-	async function handleSignUp(values: z.infer<typeof formSchema>) {
+	const form = useForm<UserSignUp>({
+		resolver: zodResolver(userSignUp),
+		defaultValues: {
+			firstName: '',
+			lastName: '',
+			email: '',
+			password: '',
+		},
+	})
+
+	async function handleSignUp(values: UserSignUp) {
 		try {
 			setIsLoading(true)
 			await signUp.mutateAsync(values)

@@ -1,7 +1,7 @@
 import {
-	idSchema,
-	portfolioCreateSchema,
-	portfolioUpdateSchema,
+	id,
+	portfolioCreate,
+	portfolioUpdate,
 } from '@lifenomics/shared/schemas'
 
 import { prisma } from '~/prisma'
@@ -22,19 +22,17 @@ export const portfolio = router({
 		})
 	}),
 
-	getById: protectedProcedure
-		.input(idSchema)
-		.query(async ({ input, ctx }) => {
-			return await prisma.portfolio.findUnique({
-				where: {
-					id: input,
-					userId: ctx.user.id,
-				},
-			})
-		}),
+	getById: protectedProcedure.input(id).query(async ({ input, ctx }) => {
+		return await prisma.portfolio.findUnique({
+			where: {
+				id: input,
+				userId: ctx.user.id,
+			},
+		})
+	}),
 
 	getByIdWithAssets: protectedProcedure
-		.input(idSchema)
+		.input(id)
 		.query(async ({ input, ctx }) => {
 			return await prisma.portfolio.findUnique({
 				where: {
@@ -48,7 +46,7 @@ export const portfolio = router({
 		}),
 
 	create: protectedProcedure
-		.input(portfolioCreateSchema)
+		.input(portfolioCreate)
 		.mutation(async ({ input, ctx }) => {
 			const { assetIds, name, comment } = input
 
@@ -71,7 +69,7 @@ export const portfolio = router({
 		}),
 
 	update: protectedProcedure
-		.input(portfolioUpdateSchema)
+		.input(portfolioUpdate)
 		.mutation(async ({ input, ctx }) => {
 			const { id, assetIds, name, comment } = input
 
@@ -92,16 +90,14 @@ export const portfolio = router({
 			})
 		}),
 
-	delete: protectedProcedure
-		.input(idSchema)
-		.mutation(async ({ input, ctx }) => {
-			await prisma.portfolio.delete({
-				where: {
-					id: input,
-					userId: ctx.user.id,
-				},
-			})
-		}),
+	delete: protectedProcedure.input(id).mutation(async ({ input, ctx }) => {
+		await prisma.portfolio.delete({
+			where: {
+				id: input,
+				userId: ctx.user.id,
+			},
+		})
+	}),
 })
 
 export type PortfolioRouter = typeof portfolio

@@ -33,7 +33,7 @@ export function ProfileDropdown() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Avatar className='cursor-pointer'>
-					<AvatarImage src={user.avatarUrl ?? ''} />
+					<AvatarImage src={user.avatarUrl ?? undefined} />
 					<AvatarFallback>
 						{user.firstName.charAt(0)}
 						{user.lastName.charAt(0)}

@@ -1,133 +1,161 @@
 import { z } from 'zod'
 
-// General
-export const idSchema = z.number().int().positive()
-export type Id = z.infer<typeof idSchema>
-
-export const idArraySchema = z.array(idSchema)
-export type IdArray = z.infer<typeof idArraySchema>
-
-export const practicalStringSchema = z.string().trim().min(2)
-export type PracticalString = z.infer<typeof practicalStringSchema>
+// Utilities
+export const string = z.string().trim().min(2, 'Must be at least 2 characters')
+export const positiveInt = z.number().int().positive()
+export const defaultFalseBoolean = z.boolean().default(false)
+export const id = positiveInt
+export const email = string.email('Must be a valid email address')
+export const password = z
+	.string()
+	.min(8, 'Password must be at least 8 characters long')
+export const url = string.url('Must be a valid URL')
 
 // Asset
 export const assetType = z.enum(['stock', 'crypto', 'forex', 'commodity'])
 export type AssetType = z.infer<typeof assetType>
 
-export const assetCreateSchema = z.object({
-	exchangeId: idSchema,
-	portfolioIds: idArraySchema.optional(),
-	transactionIds: idArraySchema.optional(),
+export const assetCreate = z.object({
+	exchangeId: id,
+	portfolioIds: z.array(id).optional(),
+	transactionIds: z.array(id).optional(),
 	type: assetType,
-	ticker: practicalStringSchema,
-	sectorIds: idArraySchema.optional(),
-	name: practicalStringSchema,
-	description: practicalStringSchema.optional(),
-	imageUrl: practicalStringSchema.optional(),
+	ticker: string,
+	sectorIds: z.array(id).optional(),
+	name: string,
+	description: string.optional(),
+	imageUrl: string.optional(),
 })
-export type AssetCreate = z.infer<typeof assetCreateSchema>
+export type AssetCreate = z.infer<typeof assetCreate>
 
-export const assetUpdateSchema = z.object({
-	id: idSchema,
-	portfolioIds: idArraySchema.optional(),
-	transactionIds: idArraySchema.optional(),
-	exchangeId: idSchema.optional(),
+export const assetUpdate = z.object({
+	id: id,
+	portfolioIds: z.array(id).optional(),
+	transactionIds: z.array(id).optional(),
+	exchangeId: id.optional(),
 	type: assetType.optional(),
-	ticker: practicalStringSchema.optional(),
-	sectorIds: idArraySchema.optional(),
-	name: practicalStringSchema.optional(),
-	description: practicalStringSchema.optional(),
-	imageUrl: practicalStringSchema.optional(),
+	ticker: string.optional(),
+	sectorIds: z.array(id).optional(),
+	name: string.optional(),
+	description: string.optional(),
+	imageUrl: string.optional(),
 })
-export type AssetUpdate = z.infer<typeof assetUpdateSchema>
+export type AssetUpdate = z.infer<typeof assetUpdate>
 
 // Exchange
-export const exchangeCreateSchema = z.object({
-	assetIds: idArraySchema.optional(),
-	country: practicalStringSchema,
-	city: practicalStringSchema,
-	website: practicalStringSchema,
-	currencyId: idSchema,
-	name: practicalStringSchema,
-	shortName: practicalStringSchema,
-	timezoneName: practicalStringSchema,
-	timezoneShortName: practicalStringSchema,
+export const exchangeCreate = z.object({
+	assetIds: z.array(id).optional(),
+	country: string,
+	city: string,
+	website: string,
+	currencyId: id,
+	name: string,
+	shortName: string,
+	timezoneName: string,
+	timezoneShortName: string,
 })
-export type ExchangeCreate = z.infer<typeof exchangeCreateSchema>
+export type ExchangeCreate = z.infer<typeof exchangeCreate>
 
-export const exchangeUpdateSchema = z.object({
-	id: idSchema,
-	assetIds: idArraySchema.optional(),
-	country: practicalStringSchema.optional(),
-	city: practicalStringSchema.optional(),
-	website: practicalStringSchema.optional(),
-	currencyId: idSchema.optional(),
-	name: practicalStringSchema.optional(),
-	shortName: practicalStringSchema.optional(),
-	timezoneName: practicalStringSchema.optional(),
-	timezoneShortName: practicalStringSchema.optional(),
+export const exchangeUpdate = z.object({
+	id: id,
+	assetIds: z.array(id).optional(),
+	country: string.optional(),
+	city: string.optional(),
+	website: string.optional(),
+	currencyId: id.optional(),
+	name: string.optional(),
+	shortName: string.optional(),
+	timezoneName: string.optional(),
+	timezoneShortName: string.optional(),
 })
-export type ExchangeUpdate = z.infer<typeof exchangeUpdateSchema>
+export type ExchangeUpdate = z.infer<typeof exchangeUpdate>
 
 // Portfolio
-export const portfolioCreateSchema = z.object({
-	assetIds: idArraySchema.optional(),
-	name: practicalStringSchema,
-	comment: practicalStringSchema.optional(),
+export const portfolioCreate = z.object({
+	assetIds: z.array(id).optional(),
+	name: string,
+	comment: string.optional(),
 })
-export type PortfolioCreate = z.infer<typeof portfolioCreateSchema>
+export type PortfolioCreate = z.infer<typeof portfolioCreate>
 
-export const portfolioUpdateSchema = z.object({
-	id: idSchema,
-	assetIds: idArraySchema.optional(),
-	name: practicalStringSchema.optional(),
-	comment: practicalStringSchema.optional(),
+export const portfolioUpdate = z.object({
+	id: id,
+	assetIds: z.array(id).optional(),
+	name: string.optional(),
+	comment: string.optional(),
 })
-export type PortfolioUpdate = z.infer<typeof portfolioUpdateSchema>
+export type PortfolioUpdate = z.infer<typeof portfolioUpdate>
 
 // Transaction
-export const transactionTypeSchema = z.enum(['purchase', 'sale'])
+export const transactionType = z.enum(['purchase', 'sale'])
 
-export const transactionCreateSchema = z.object({
-	assetId: idSchema,
-	transactionType: transactionTypeSchema,
+export const transactionCreate = z.object({
+	assetId: id,
+	transactionType: transactionType,
 	quantity: z.number(),
 	price: z.number(),
 	timestamp: z.date(),
 })
-export type TransactionCreate = z.infer<typeof transactionCreateSchema>
+export type TransactionCreate = z.infer<typeof transactionCreate>
 
-export const transactionUpdateSchema = z.object({
-	id: idSchema,
-	assetId: idSchema.optional(),
-	transactionType: transactionTypeSchema.optional(),
+export const transactionUpdate = z.object({
+	id: id,
+	assetId: id.optional(),
+	transactionType: transactionType.optional(),
 	quantity: z.number().optional(),
 	price: z.number().optional(),
 	timestamp: z.date().optional(),
 })
-export type TransactionUpdate = z.infer<typeof transactionUpdateSchema>
+export type TransactionUpdate = z.infer<typeof transactionUpdate>
 
 // User
-export const signInSchema = z.object({
-	email: z.string().trim().email('Please enter a valid email address'),
-	password: z.string().min(8, 'Password must be at least 8 characters long'),
+export const userSignIn = z.object({
+	email: email,
+	password: password,
 })
-export type SignIn = z.infer<typeof signInSchema>
+export type UserSignIn = z.infer<typeof userSignIn>
 
-export const signUpSchema = signInSchema.extend({
-	firstName: z
-		.string()
-		.trim()
-		.min(2, 'First name must be at least 2 characters long'),
-	lastName: z.string().min(2, 'Last name must be at least 2 characters long'),
+export const userSignUp = userSignIn.extend({
+	firstName: string,
+	lastName: string,
 })
-export type SignUp = z.infer<typeof signUpSchema>
-export const userUpdateSchema = z.object({
-	email: z.string().trim().email().optional(),
-	password: z.string().min(8).optional(),
-	firstName: z.string().trim().min(2).optional(),
-	lastName: z.string().trim().min(2).optional(),
-	birthDate: z.date().optional(),
-	avatarUrl: z.string().trim().optional(),
-})
-export type UserUpdate = z.infer<typeof userUpdateSchema>
+export type UserSignUp = z.infer<typeof userSignUp>
+
+export const userUpdate = z
+	.object({
+		firstName: string,
+		lastName: string,
+		birthDate: z.date().optional(),
+		avatarUrl: url.optional(),
+		email: email,
+		// allow empty string (default value) on submit
+		currentPassword: z.union([password, z.literal('')]).optional(),
+		newPassword: z.union([password, z.literal('')]).optional(),
+		confirmPassword: z.union([password, z.literal('')]).optional(),
+	})
+	.refine(
+		(data) => {
+			if (data.newPassword && data.newPassword !== data.confirmPassword) {
+				return false
+			}
+			return true
+		},
+		{
+			message: "Passwords don't match",
+			path: ['confirmPassword'],
+		},
+	)
+	.refine(
+		(data) => {
+			// If updating password, current password is required
+			if (data.newPassword && !data.currentPassword) {
+				return false
+			}
+			return true
+		},
+		{
+			message: 'Current password is required when changing password',
+			path: ['currentPassword'],
+		},
+	)
+export type UserUpdate = z.infer<typeof userUpdate>

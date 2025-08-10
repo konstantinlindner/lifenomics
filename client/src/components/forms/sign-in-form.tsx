@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import { type UserSignIn, userSignIn } from '@lifenomics/shared/schemas'
+
 import { isTRPCClientError, trpc } from '~/clients'
 import { log } from '~/helpers'
 import { FormField, FormItem } from '~/providers'
@@ -9,7 +11,6 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 
@@ -29,20 +30,21 @@ export function SignInForm() {
 	const [showPassword, setShowPassword] = useState(false)
 	const signIn = useMutation(trpc.user.signIn.mutationOptions())
 
-	const formSchema = z.object({
-		email: z.string().trim().email(),
-		password: z.string().min(8),
-	})
-	type FormValues = z.infer<typeof formSchema>
-
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<UserSignIn>({
+		resolver: zodResolver(userSignIn),
+		defaultValues: {
+			email: '',
+			password: '',
+		},
 	})
 
-	async function handleSignIn(values: FormValues) {
+	async function handleSignIn(values: UserSignIn) {
 		try {
 			setIsLoading(true)
-			await signIn.mutateAsync(values)
+			await signIn.mutateAsync({
+				email: values.email,
+				password: values.password,
+			})
 			await router.invalidate()
 			window.location.href = '/'
 		} catch (error) {

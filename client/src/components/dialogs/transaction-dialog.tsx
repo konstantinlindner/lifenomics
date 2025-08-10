@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import {
 	type TransactionCreate,
-	transactionCreateSchema,
+	transactionCreate,
 } from '@lifenomics/shared/schemas'
 
 import { trpc } from '~/clients'
@@ -67,7 +67,7 @@ export function TransactionDialog({
 	)
 
 	const form = useForm<TransactionCreate>({
-		resolver: zodResolver(transactionCreateSchema),
+		resolver: zodResolver(transactionCreate),
 	})
 
 	useEffect(() => {
@@ -145,7 +145,7 @@ export function TransactionDialog({
 					>
 						Transaction
 					</DropdownMenuItem>
-				:	<Button variant='secondary'>
+				:	<Button variant='outline' size='icon'>
 						<PlusIcon />
 					</Button>
 				}
@@ -218,7 +218,6 @@ export function TransactionDialog({
 							disabled={isLoading}
 							type='submit'
 							className='w-full'
-							variant={'secondary'}
 						>
 							{isLoading ?
 								<LoadingIndicator size='sm' />

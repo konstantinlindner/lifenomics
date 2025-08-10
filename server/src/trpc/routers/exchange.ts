@@ -1,8 +1,4 @@
-import {
-	exchangeCreateSchema,
-	exchangeUpdateSchema,
-	idSchema,
-} from '@lifenomics/shared/schemas'
+import { exchangeCreate, exchangeUpdate, id } from '@lifenomics/shared/schemas'
 
 import { prisma } from '~/prisma'
 
@@ -15,7 +11,7 @@ export const exchange = router({
 		return await prisma.exchange.findMany({})
 	}),
 
-	getById: protectedProcedure.input(idSchema).query(async ({ input }) => {
+	getById: protectedProcedure.input(id).query(async ({ input }) => {
 		return await prisma.exchange.findUnique({
 			where: {
 				id: input,
@@ -24,7 +20,7 @@ export const exchange = router({
 	}),
 
 	create: protectedProcedure
-		.input(exchangeCreateSchema)
+		.input(exchangeCreate)
 		.mutation(async ({ input }) => {
 			const {
 				assetIds,
@@ -62,7 +58,7 @@ export const exchange = router({
 		}),
 
 	update: protectedProcedure
-		.input(exchangeUpdateSchema)
+		.input(exchangeUpdate)
 		.mutation(async ({ input }) => {
 			const {
 				country,
@@ -103,7 +99,7 @@ export const exchange = router({
 			})
 		}),
 
-	delete: protectedProcedure.input(idSchema).mutation(async ({ input }) => {
+	delete: protectedProcedure.input(id).mutation(async ({ input }) => {
 		await prisma.exchange.delete({
 			where: {
 				id: input,

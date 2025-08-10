@@ -1,124 +1,86 @@
 import { useState } from 'react'
 
+import { type UserUpdate, userUpdate } from '@lifenomics/shared/schemas'
+
 import { isTRPCClientError, trpc } from '~/clients'
-import { invalidateQuery, log } from '~/helpers'
+import { cn, invalidateQuery, log } from '~/helpers'
+import { useUser } from '~/hooks'
 import { FormField, FormItem } from '~/providers'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
+
+import { CalendarIcon } from 'lucide-react'
 
 import {
 	Button,
+	Calendar,
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
 	FormControl,
+	FormDescription,
 	FormLabel,
 	FormMessage,
 	Input,
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
 } from '~/components/ui'
 
-import { LoadingIndicator } from '~/components'
+import { LoadingIndicator, ProfilePicturePicker } from '~/components'
 
-const formSchema = z
-	.object({
-		email: z
-			.string({
-				required_error: 'Email is required',
-			})
-			.trim()
-			.email('Please enter a valid email address'),
-		currentPassword: z
-			.string()
-			.min(8, {
-				message: 'Password should be at least 8 characters long',
-			})
-			.optional(),
-		newPassword: z
-			.string()
-			.min(8, {
-				message: 'Password should be at least 8 characters long',
-			})
-			.optional(),
-		confirmPassword: z.string().optional(),
-	})
-	.refine(
-		(data) => {
-			if (data.newPassword && data.newPassword !== data.confirmPassword) {
-				return false
-			}
-			return true
-		},
-		{
-			message: "Passwords don't match",
-			path: ['confirmPassword'],
-		},
-	)
-	.refine(
-		(data) => {
-			// If updating password, current password is required
-			if (data.newPassword && !data.currentPassword) {
-				return false
-			}
-			return true
-		},
-		{
-			message: 'Current password is required when changing password',
-			path: ['currentPassword'],
-		},
-	)
-
-type FormValues = z.infer<typeof formSchema>
-
-interface ProfileUpdateFormProps {
-	currentEmail: string
-}
-
-export function ProfileUpdateForm({ currentEmail }: ProfileUpdateFormProps) {
+export function ProfileUpdateForm() {
 	const [isLoading, setIsLoading] = useState(false)
+
+	const { user } = useUser()
 	const updateUser = useMutation(trpc.user.update.mutationOptions())
 
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<UserUpdate>({
+		resolver: zodResolver(userUpdate),
 		defaultValues: {
-			email: currentEmail,
+			firstName: user?.firstName ?? '',
+			lastName: user?.lastName ?? '',
+			birthDate:
+				user?.birthDate ? dayjs(user.birthDate).toDate() : undefined,
+			email: user?.email ?? '',
 			currentPassword: '',
 			newPassword: '',
 			confirmPassword: '',
 		},
 	})
 
-	async function handleUpdate(values: FormValues) {
+	async function handleUpdate(values: UserUpdate) {
 		try {
 			setIsLoading(true)
 
-			const hasEmailChange = values.email !== currentEmail
-			const hasPasswordChange = !!values.newPassword
+			await updateUser.mutateAsync({
+				firstName: values.firstName,
+				lastName: values.lastName,
+				birthDate: values.birthDate,
+				email: values.email,
+				currentPassword: values.currentPassword,
+				newPassword: values.newPassword,
+			})
 
-			if (hasEmailChange) {
-				await updateUser.mutateAsync({ email: values.email })
-			}
+			await invalidateQuery(trpc.user.get.queryKey())
 
-			if (hasPasswordChange && values.currentPassword) {
-				await updateUser.mutateAsync({ password: values.newPassword })
-			}
+			form.reset({
+				firstName: values.firstName,
+				lastName: values.lastName,
+				birthDate: values.birthDate,
+				email: values.email,
+				currentPassword: '',
+				newPassword: '',
+				confirmPassword: '',
+			})
 
-			if (hasEmailChange || hasPasswordChange) {
-				await invalidateQuery(trpc.user.get.queryKey())
-
-				toast.success('Profile updated successfully')
-
-				form.setValue('currentPassword', '')
-				form.setValue('newPassword', '')
-				form.setValue('confirmPassword', '')
-			} else {
-				toast.info('No changes to save')
-			}
+			toast.success('Profile updated successfully')
 		} catch (error) {
 			log(error)
 
@@ -138,15 +100,116 @@ export function ProfileUpdateForm({ currentEmail }: ProfileUpdateFormProps) {
 			<CardHeader>
 				<CardTitle>Profile Settings</CardTitle>
 				<CardDescription>
-					Update your email address and password
+					Update your profile information
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
+				<div className='flex items-center justify-center'>
+					<ProfilePicturePicker />
+				</div>
+
 				<FormProvider {...form}>
 					<form
 						onSubmit={form.handleSubmit(handleUpdate)}
-						className='space-y-6'
+						className='space-y-6 pt-8'
 					>
+						<div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+							<FormField
+								control={form.control}
+								name='firstName'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>First Name</FormLabel>
+										<FormControl>
+											<Input
+												id='firstName'
+												type='text'
+												autoCapitalize='none'
+												autoComplete='given-name'
+												autoCorrect='off'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name='lastName'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Last Name</FormLabel>
+										<FormControl>
+											<Input
+												id='lastName'
+												type='text'
+												autoCapitalize='none'
+												autoComplete='last-name'
+												autoCorrect='off'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<FormField
+							control={form.control}
+							name='birthDate'
+							render={({ field }) => (
+								<FormItem className='flex flex-col'>
+									<FormLabel>Date of birth</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant='outline'
+													className={cn(
+														'w-[200px] pl-3 text-left font-normal',
+														!field.value &&
+															'text-muted-foreground',
+													)}
+												>
+													{field.value ?
+														dayjs(
+															field.value,
+														).format('DD/MM/YYYY')
+													:	<span>Pick a date</span>}
+													<CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent
+											className='z-[9999]'
+											align='start'
+											sideOffset={8}
+										>
+											<Calendar
+												mode='single'
+												selected={field.value}
+												onSelect={field.onChange}
+												disabled={(date) =>
+													date > new Date() ||
+													date <
+														new Date('1900-01-01')
+												}
+												captionLayout='dropdown'
+											/>
+										</PopoverContent>
+									</Popover>
+									<FormDescription>
+										Your date of birth is used to calculate
+										your age.
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<FormField
 							control={form.control}
 							name='email'

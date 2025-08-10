@@ -13,7 +13,7 @@ import {
 	useReactTable,
 } from '@tanstack/react-table'
 
-import { ListFilterIcon, ScrollIcon } from 'lucide-react'
+import { HandCoinsIcon, ListFilterIcon } from 'lucide-react'
 
 import {
 	Button,
@@ -71,7 +71,8 @@ export function DataTable<TData, TValue>({
 
 					<div className='flex items-center gap-2'>
 						<Button
-							size={'icon'}
+							variant='outline'
+							size='icon'
 							onClick={() => {
 								setIsFilterPanelOpen(!isFilterPanelOpen)
 							}}
@@ -93,7 +94,7 @@ export function DataTable<TData, TValue>({
 					</div>
 				</div>
 			)}
-			<Wrapper icon={<ScrollIcon />} tableName={'Transactions'}>
+			<Wrapper icon={<HandCoinsIcon />} tableName={'Transactions'}>
 				<Table className='border-b border-t'>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (

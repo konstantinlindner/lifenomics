@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import {
 	type PortfolioCreate,
-	portfolioCreateSchema,
+	portfolioCreate,
 } from '@lifenomics/shared/schemas'
 
 import { trpc } from '~/clients'
@@ -57,7 +57,7 @@ export function PortfolioDialog({
 	const deletePortfolio = useMutation(trpc.portfolio.delete.mutationOptions())
 
 	const form = useForm<PortfolioCreate>({
-		resolver: zodResolver(portfolioCreateSchema),
+		resolver: zodResolver(portfolioCreate),
 		defaultValues: {
 			name: portfolio?.name,
 			comment: portfolio?.comment ?? undefined,
@@ -142,7 +142,7 @@ export function PortfolioDialog({
 					>
 						Portfolio
 					</DropdownMenuItem>
-				:	<Button variant='secondary' className='w-fit'>
+				:	<Button variant='outline' size='icon'>
 						<PlusIcon />
 					</Button>
 				}
@@ -208,7 +208,6 @@ export function PortfolioDialog({
 							disabled={isLoading}
 							type='submit'
 							className='mt-4 w-full'
-							variant={'secondary'}
 						>
 							{isLoading ?
 								<LoadingIndicator size='sm' />
@@ -218,7 +217,7 @@ export function PortfolioDialog({
 							<Button
 								onClick={() => handleDelete(portfolioId)}
 								className='mt-4 w-full'
-								variant={'destructive'}
+								variant='destructive'
 							>
 								Delete portfolio
 							</Button>

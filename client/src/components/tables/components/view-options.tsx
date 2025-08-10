@@ -20,7 +20,7 @@ export function ViewOptions<TData>({ table }: ViewOptionsProps<TData>) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button size='sm' className='h-8'>
+				<Button size='sm' variant='outline'>
 					<Settings2Icon className='mr-2 size-4' />
 					View
 				</Button>
@@ -42,7 +42,7 @@ export function ViewOptions<TData>({ table }: ViewOptionsProps<TData>) {
 								className='capitalize'
 								checked={column.getIsVisible()}
 								onCheckedChange={(value) => {
-									column.toggleVisibility(!!value)
+									column.toggleVisibility(value)
 								}}
 							>
 								{column.id}

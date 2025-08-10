@@ -15,11 +15,11 @@ export function ResetFilter<TData>({ table }: ResetFilterProps<TData>) {
 		<>
 			{isFiltered && (
 				<Button
-					variant='ghost'
+					variant='outline'
+					size='icon'
 					onClick={() => {
 						table.resetColumnFilters()
 					}}
-					className='h-8 px-2 lg:px-3'
 				>
 					Reset
 					<XIcon className='ml-2 size-4' />

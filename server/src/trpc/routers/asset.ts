@@ -1,8 +1,4 @@
-import {
-	assetCreateSchema,
-	assetUpdateSchema,
-	idSchema,
-} from '@lifenomics/shared/schemas'
+import { assetCreate, assetUpdate, id } from '@lifenomics/shared/schemas'
 
 import { prisma } from '~/prisma'
 
@@ -24,7 +20,7 @@ export const asset = router({
 	}),
 
 	getByPortfolioId: protectedProcedure
-		.input(idSchema)
+		.input(id)
 		.query(async ({ input, ctx }) => {
 			const portfolio = await prisma.portfolio.findUnique({
 				where: {
@@ -51,30 +47,28 @@ export const asset = router({
 			})
 		}),
 
-	getById: protectedProcedure
-		.input(idSchema)
-		.query(async ({ input, ctx }) => {
-			return await prisma.asset.findUnique({
-				where: {
-					id: input,
-				},
-				include: {
-					portfolios: {
-						where: {
-							userId: ctx.user.id,
-						},
-					},
-					transactions: {
-						where: {
-							userId: ctx.user.id,
-						},
+	getById: protectedProcedure.input(id).query(async ({ input, ctx }) => {
+		return await prisma.asset.findUnique({
+			where: {
+				id: input,
+			},
+			include: {
+				portfolios: {
+					where: {
+						userId: ctx.user.id,
 					},
 				},
-			})
-		}),
+				transactions: {
+					where: {
+						userId: ctx.user.id,
+					},
+				},
+			},
+		})
+	}),
 
 	getByIdWithTransactions: protectedProcedure
-		.input(idSchema)
+		.input(id)
 		.query(async ({ input, ctx }) => {
 			return await prisma.asset.findUnique({
 				where: {
@@ -91,7 +85,7 @@ export const asset = router({
 		}),
 
 	create: protectedProcedure
-		.input(assetCreateSchema)
+		.input(assetCreate)
 		.mutation(async ({ input }) => {
 			const {
 				exchangeId,
@@ -133,7 +127,7 @@ export const asset = router({
 		}),
 
 	update: protectedProcedure
-		.input(assetUpdateSchema)
+		.input(assetUpdate)
 		.mutation(async ({ input }) => {
 			const {
 				id,
@@ -178,7 +172,7 @@ export const asset = router({
 			})
 		}),
 
-	delete: protectedProcedure.input(idSchema).mutation(async ({ input }) => {
+	delete: protectedProcedure.input(id).mutation(async ({ input }) => {
 		await prisma.asset.delete({
 			where: {
 				id: input,

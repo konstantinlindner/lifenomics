@@ -12,7 +12,7 @@ import { AssetDialog, PortfolioDialog, TransactionDialog } from '~/components'
 
 export function AddEntryDropdown() {
 	return (
-		// Note: To use the Dialog component from within a Context Menu or Dropdown Menu,
+		// To use the Dialog component from within a Context Menu or Dropdown Menu,
 		// you must encase the Context Menu or Dropdown Menu component in the Dialog component.
 		<Dialog>
 			<DropdownMenu>

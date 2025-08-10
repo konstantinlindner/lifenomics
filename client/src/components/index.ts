@@ -21,7 +21,6 @@ export { TransactionTable } from './tables/transaction'
 
 // components
 export { ButtonLink } from './button-link'
-export { DatePicker } from './date-picker'
 export { ErrorItem } from './error-item'
 export { LoadingIndicator } from './loading-indicator'
 export { LoadingScreen } from './loading-screen'

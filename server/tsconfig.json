@@ -10,12 +10,13 @@
 		"emitDeclarationOnly": true,
 		"composite": true,
 		"rootDir": ".",
+		"types": ["node"],
 		"paths": {
 			"~/*": ["./src/*"],
 			"~/routers": ["./src/trpc/routers"],
 			"@prisma/client": ["./prisma/generated"]
 		}
 	},
-	"include": ["src/**/*.ts"],
+	"include": ["src/**/*.ts", "prisma.config.ts"],
 	"exclude": ["node_modules", "dist"]
 }

@@ -30,7 +30,7 @@ export function DeleteDialog({ message, handleClick }: DeleteDialogProps) {
 			</DialogTrigger>
 			<DialogContent className='p-8 sm:max-w-[425px]'>
 				<p>{message}</p>
-				<Button variant={'destructive'} onClick={handleButtonPress}>
+				<Button variant='destructive' onClick={handleButtonPress}>
 					Delete
 				</Button>
 			</DialogContent>
