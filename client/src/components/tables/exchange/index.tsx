@@ -7,13 +7,13 @@ import { ErrorItem } from '~/components'
 import { columns } from './columns'
 import { DataTable } from './data-table'
 
-export function TransactionTable() {
+export function ExchangeTable() {
 	const {
-		data: transactions,
+		data: exchanges,
 		isPending,
 		isError,
 		error,
-	} = useQuery(trpc.transaction.get.queryOptions())
+	} = useQuery(trpc.exchange.get.queryOptions())
 
 	if (isPending) {
 		return null
@@ -23,5 +23,5 @@ export function TransactionTable() {
 		return <ErrorItem error={error} />
 	}
 
-	return <DataTable columns={columns} data={transactions} />
+	return <DataTable columns={columns} data={exchanges} />
 }

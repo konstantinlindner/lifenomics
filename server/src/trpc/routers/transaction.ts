@@ -15,7 +15,7 @@ import {
 import { protectedProcedure, router } from '../trpc'
 
 export const transaction = router({
-	getAll: protectedProcedure.query(async ({ ctx }) => {
+	get: protectedProcedure.query(async ({ ctx }) => {
 		return await prisma.transaction.findMany({
 			where: {
 				userId: ctx.user.id,

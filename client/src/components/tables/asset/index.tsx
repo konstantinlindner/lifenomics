@@ -13,7 +13,7 @@ export function AssetTable() {
 		isPending,
 		isError,
 		error,
-	} = useQuery(trpc.asset.getAll.queryOptions())
+	} = useQuery(trpc.asset.get.queryOptions())
 
 	if (isPending) {
 		return null

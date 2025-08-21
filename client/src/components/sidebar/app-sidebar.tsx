@@ -43,7 +43,7 @@ export type NavItem = {
 }
 
 const data = {
-	'My assets': [
+	'My portfolio': [
 		{
 			title: 'Home',
 			url: '/',

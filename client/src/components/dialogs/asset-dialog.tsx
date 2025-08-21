@@ -50,8 +50,8 @@ export function AssetDialog({ assetId, type = 'sidebar' }: AssetDialogProps) {
 			enabled: !!assetId,
 		}),
 	)
-	const { data: exchanges } = useQuery(trpc.exchange.getAll.queryOptions())
-	// const { data: sectors } = useQuery(trpc.sector.getAll.queryOptions())
+	const { data: exchanges } = useQuery(trpc.exchange.get.queryOptions())
+	// const { data: sectors } = useQuery(trpc.sector.get.queryOptions())
 
 	const assetCreator = useMutation(trpc.asset.create.mutationOptions())
 	const assetUpdater = useMutation(trpc.asset.update.mutationOptions())
@@ -96,7 +96,7 @@ export function AssetDialog({ assetId, type = 'sidebar' }: AssetDialogProps) {
 				})
 			}
 
-			await invalidateQuery(trpc.asset.getAll.queryKey())
+			await invalidateQuery(trpc.asset.get.queryKey())
 			setOpen(false)
 		} catch {
 			if (assetId) {

@@ -4,7 +4,7 @@ import { type AssetTag, assetTags } from './assetTags'
 import { type Exchange, exchanges } from './exchanges'
 import { type Industry, industries } from './industries'
 
-type Asset = {
+export type Asset = {
 	exchange: Exchange
 	type: AssetType
 	industry: Industry
@@ -541,6 +541,26 @@ export const assets = {
 		imageUrl: '',
 		website: 'https://www.creades.se',
 	},
+	SE0020975852: {
+		exchange: exchanges.SPOTLIGHT,
+		type: 'stock',
+		industry: industries.pollutionTreatmentControls,
+		tags: [
+			assetTags.technology,
+			assetTags.wasteAndRecycling,
+			assetTags.biotechnology,
+			assetTags.materials,
+			assetTags.industry,
+		],
+		isActive: true,
+		isin: 'SE0020975852',
+		ticker: 'CYCLE',
+		name: 'Cyclezyme AB',
+		shortName: 'Cyclezyme',
+		description: '',
+		imageUrl: '',
+		website: 'https://www.cyclezyme.se/',
+	},
 	CZ1008000310: {
 		exchange: exchanges.PRAGUE,
 		type: 'stock',
@@ -626,11 +646,11 @@ export const assets = {
 		isActive: true,
 		isin: 'SE0018040677',
 		ticker: 'HTRO',
-		name: 'Hextronic Group AB',
-		shortName: 'Hextronic Group',
+		name: 'Hexatronic Group AB',
+		shortName: 'Hexatronic Group',
 		description: '',
 		imageUrl: '',
-		website: 'https://www.hextronic.com',
+		website: 'https://www.hexatronic.com',
 	},
 	US4330001060: {
 		exchange: exchanges.NYSE,
@@ -1385,6 +1405,6 @@ export const assets = {
 		website: 'https://www.zoetis.com/',
 	},
 	// todo sold:
-	// cyclezyme, fortnox, k33
+	// fortnox, k33, Lundin Gold
 	// todo bitcoin, ethereum, cardano etc.
 } as const satisfies Record<string, Asset>

@@ -11,7 +11,7 @@ export const Route = createFileRoute('/_app/portfolios')({
 })
 
 function Portfolios() {
-	const { data: portfolios } = useQuery(trpc.portfolio.getAll.queryOptions())
+	const { data: portfolios } = useQuery(trpc.portfolio.get.queryOptions())
 
 	return (
 		<main>

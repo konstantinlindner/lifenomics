@@ -6,27 +6,43 @@ export type Exchange = {
 	shortName?: string
 	code?: string
 	codeAlt?: string
-	timeZoneName: string
-	timeZoneShortName: string
+	timezoneName: string
+	timezoneShortName: string
 	currency: Currency
 	country: string
 	city: string
 	website: string
+	emoji: string
 }
 
-export const exchanges = {
+export const exchanges: Record<string, Exchange> = {
 	STOCKHOLM: {
 		MIC: 'XSTO',
 		name: 'Nasdaq Stockholm',
 		shortName: 'Stockholm',
 		code: 'STO',
 		codeAlt: 'ST',
-		timeZoneName: 'Europe/Stockholm',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Stockholm',
+		timezoneShortName: 'CEST',
 		currency: currencies.SEK,
 		country: 'Sweden',
 		city: 'Stockholm',
 		website: 'https://www.nasdaq.com/solutions/european-markets/stockholm',
+		emoji: '🇸🇪',
+	},
+	SPOTLIGHT: {
+		MIC: 'XSAT',
+		name: 'Spotlight Stockholm',
+		shortName: 'Spotlight',
+		code: 'STO',
+		codeAlt: 'ST',
+		timezoneName: 'Europe/Stockholm',
+		timezoneShortName: 'CEST',
+		currency: currencies.SEK,
+		country: 'Sweden',
+		city: 'Stockholm',
+		website: 'https://www.spotlightstockmarket.com/',
+		emoji: '🇸🇪',
 	},
 	COPENHAGEN: {
 		MIC: 'XCSE',
@@ -34,12 +50,13 @@ export const exchanges = {
 		shortName: 'Copenhagen',
 		code: 'COP',
 		codeAlt: 'CO',
-		timeZoneName: 'Europe/Copenhagen',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Copenhagen',
+		timezoneShortName: 'CEST',
 		currency: currencies.DKK,
 		country: 'Denmark',
 		city: 'Copenhagen',
 		website: 'https://www.nasdaq.com/solutions/european-markets/copenhagen',
+		emoji: '🇩🇰',
 	},
 	HELSINKI: {
 		MIC: 'XHEL',
@@ -47,12 +64,13 @@ export const exchanges = {
 		shortName: 'Helsinki',
 		code: 'HEL',
 		codeAlt: 'HE',
-		timeZoneName: 'Europe/Helsinki',
-		timeZoneShortName: 'EEST',
+		timezoneName: 'Europe/Helsinki',
+		timezoneShortName: 'EEST',
 		currency: currencies.EUR,
 		country: 'Finland',
 		city: 'Helsinki',
 		website: 'https://www.nasdaq.com/solutions/european-markets/helsinki',
+		emoji: '🇫🇮',
 	},
 	AMSTERDAM: {
 		MIC: 'XAMS',
@@ -60,12 +78,13 @@ export const exchanges = {
 		shortName: 'Amsterdam',
 		code: 'AMS',
 		codeAlt: 'AS',
-		timeZoneName: 'Europe/Amsterdam',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Amsterdam',
+		timezoneShortName: 'CEST',
 		currency: currencies.EUR,
 		country: 'Netherlands',
 		city: 'Amsterdam',
 		website: 'https://www.euronext.com/en/markets/amsterdam',
+		emoji: '🇳🇱',
 	},
 	PARIS: {
 		MIC: 'XPAR',
@@ -73,12 +92,13 @@ export const exchanges = {
 		shortName: 'Paris',
 		code: 'PAR',
 		codeAlt: 'PA',
-		timeZoneName: 'Europe/Paris',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Paris',
+		timezoneShortName: 'CEST',
 		currency: currencies.EUR,
 		country: 'France',
 		city: 'Paris',
 		website: 'https://www.euronext.com/en/markets/paris',
+		emoji: '🇫🇷',
 	},
 	XETRA: {
 		MIC: 'XETR',
@@ -86,12 +106,13 @@ export const exchanges = {
 		shortName: 'XETRA',
 		code: 'GER',
 		codeAlt: 'DE',
-		timeZoneName: 'Europe/Berlin',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Berlin',
+		timezoneShortName: 'CEST',
 		currency: currencies.EUR,
 		country: 'Germany',
 		city: 'Frankfurt',
 		website: 'https://www.xetra.com/xetra-en',
+		emoji: '🇩🇪',
 	},
 	NYSE: {
 		MIC: 'XNYS',
@@ -99,12 +120,13 @@ export const exchanges = {
 		shortName: 'NYSE',
 		// code:
 		// codeAlt:
-		timeZoneName: 'America/New_York',
-		timeZoneShortName: 'EDT',
+		timezoneName: 'America/New_York',
+		timezoneShortName: 'EDT',
 		currency: currencies.USD,
 		country: 'United States',
 		city: 'New York',
 		website: 'https://www.nyse.com/',
+		emoji: '🇺🇸',
 	},
 	NASDAQ: {
 		MIC: 'XNAS',
@@ -112,12 +134,13 @@ export const exchanges = {
 		shortName: 'NASDAQ',
 		// code:
 		// codeAlt:
-		timeZoneName: 'America/New_York',
-		timeZoneShortName: 'EDT',
+		timezoneName: 'America/New_York',
+		timezoneShortName: 'EDT',
 		currency: currencies.USD,
 		country: 'United States',
 		city: 'New York',
 		website: 'https://www.nasdaq.com/',
+		emoji: '🇺🇸',
 	},
 	TORONTO: {
 		MIC: 'XTSE',
@@ -125,12 +148,13 @@ export const exchanges = {
 		shortName: 'TSX',
 		code: 'TOR',
 		codeAlt: 'TO',
-		timeZoneName: 'America/Toronto',
-		timeZoneShortName: 'EDT',
+		timezoneName: 'America/Toronto',
+		timezoneShortName: 'EDT',
 		currency: currencies.CAD,
 		country: 'Canada',
 		city: 'Toronto',
 		website: 'https://www.tsx.com/',
+		emoji: '🇨🇦',
 	},
 	PRAGUE: {
 		MIC: 'XPRA',
@@ -138,12 +162,13 @@ export const exchanges = {
 		shortName: 'PSE',
 		code: 'PRA',
 		codeAlt: 'PR',
-		timeZoneName: 'Europe/Prague',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Prague',
+		timezoneShortName: 'CEST',
 		currency: currencies.CZK,
 		country: 'Czechia',
 		city: 'Prague',
 		website: 'https://www.pse.cz/',
+		emoji: '🇨🇿',
 	},
 	OSLO: {
 		MIC: 'XOSL',
@@ -151,12 +176,13 @@ export const exchanges = {
 		shortName: 'Oslo Børs',
 		code: 'OSL',
 		codeAlt: 'OS',
-		timeZoneName: 'Europe/Oslo',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Oslo',
+		timezoneShortName: 'CEST',
 		currency: currencies.NOK,
 		country: 'Norway',
 		city: 'Oslo',
 		website: 'https://www.oslobors.no/',
+		emoji: '🇳🇴',
 	},
 	DUBLIN: {
 		MIC: 'XDUB',
@@ -164,12 +190,13 @@ export const exchanges = {
 		shortName: 'ISE',
 		code: 'ISE',
 		codeAlt: 'IR',
-		timeZoneName: 'Europe/Dublin',
-		timeZoneShortName: 'IST',
+		timezoneName: 'Europe/Dublin',
+		timezoneShortName: 'IST',
 		currency: currencies.EUR,
 		country: 'Ireland',
 		city: 'Dublin',
 		website: 'https://www.ise.ie/',
+		emoji: '🇮🇪',
 	},
 	SWISS: {
 		MIC: 'XSWX',
@@ -177,12 +204,13 @@ export const exchanges = {
 		shortName: 'Swiss Exchange',
 		code: 'EBS',
 		codeAlt: 'SW',
-		timeZoneName: 'Europe/Zurich',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Zurich',
+		timezoneShortName: 'CEST',
 		currency: currencies.CHF,
 		country: 'Switzerland',
 		city: 'Zurich',
 		website: 'https://www.six-group.com/en/site/exchanges.html',
+		emoji: '🇨🇭',
 	},
 	BRUSSELS: {
 		MIC: 'XBRU',
@@ -190,11 +218,12 @@ export const exchanges = {
 		shortName: 'Brussels',
 		code: 'BRU',
 		codeAlt: 'BR',
-		timeZoneName: 'Europe/Brussels',
-		timeZoneShortName: 'CEST',
+		timezoneName: 'Europe/Brussels',
+		timezoneShortName: 'CEST',
 		currency: currencies.EUR,
 		country: 'Belgium',
 		city: 'Brussels',
 		website: 'https://www.euronext.com/en/markets/brussels',
+		emoji: '🇧🇪',
 	},
-} as const satisfies Record<string, Exchange>
+}

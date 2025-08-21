@@ -14,6 +14,7 @@ export const sectors = {
 			industries.consumerElectronics,
 			industries.softwareApplication,
 			industries.semiconductorEquipmentMaterials,
+			industries.informationTechnologyServices,
 			industries.computerHardware,
 			industries.communicationEquipment,
 			industries.electronicComponents,

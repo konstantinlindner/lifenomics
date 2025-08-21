@@ -1,9 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
 
+import { ExchangeTable } from '~/components'
+
 export const Route = createFileRoute('/_app/exchanges')({
 	component: Exchanges,
 })
 
 function Exchanges() {
-	return <div>Hello exchanges</div>
+	return (
+		<main>
+			<ExchangeTable />
+		</main>
+	)
 }

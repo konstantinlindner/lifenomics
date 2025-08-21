@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { AssetTable } from '~/components'
+import { OwnedAssetTable } from '~/components'
 
 export const Route = createFileRoute('/_app/my-assets')({
 	component: MyAssets,
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_app/my-assets')({
 function MyAssets() {
 	return (
 		<main>
-			<AssetTable />
+			<OwnedAssetTable />
 		</main>
 	)
 }

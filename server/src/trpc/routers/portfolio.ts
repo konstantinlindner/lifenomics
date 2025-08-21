@@ -11,7 +11,7 @@ import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
 import { protectedProcedure, router } from '../trpc'
 
 export const portfolio = router({
-	getAll: protectedProcedure.query(async ({ ctx }) => {
+	get: protectedProcedure.query(async ({ ctx }) => {
 		return await prisma.portfolio.findMany({
 			where: {
 				userId: ctx.user.id,

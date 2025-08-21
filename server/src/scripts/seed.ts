@@ -1,8 +1,10 @@
-import { assets as assetDefs } from './constants/assets'
-import { currencies as currencyDefs } from './constants/currencies'
-import { exchanges as exchangeDefs } from './constants/exchanges'
-import { sectors as sectorDefs } from './constants/sectors'
-import { prisma } from './prisma'
+import { assetTags as assetTagDefs } from '../constants/assetTags'
+import { assets as assetDefs } from '../constants/assets'
+import { currencies as currencyDefs } from '../constants/currencies'
+import { exchanges as exchangeDefs } from '../constants/exchanges'
+import { industries as industryDefs } from '../constants/industries'
+import { sectors as sectorDefs } from '../constants/sectors'
+import { prisma } from '../prisma'
 
 async function main() {
 	// Build industry -> sector name map from sector definitions
@@ -38,7 +40,52 @@ async function main() {
 		sectorIdByName.set(name, row.id)
 	}
 
-	// 3) Exchanges
+	// 3) Industries
+	const industryIdByName = new Map<string, number>()
+	for (const name of Object.values(industryDefs)) {
+		const sectorName = industryToSectorName.get(name)
+		if (!sectorName) {
+			console.warn(
+				`Warning: Industry "${name}" not found in any sector, skipping`,
+			)
+			continue
+		}
+
+		const sectorId = sectorIdByName.get(sectorName)
+		if (!sectorId) {
+			console.warn(
+				`Warning: Sector "${sectorName}" not found for industry "${name}", skipping`,
+			)
+			continue
+		}
+
+		const existing = await prisma.industry.findFirst({ where: { name } })
+		const row =
+			existing ??
+			(await prisma.industry.create({
+				data: {
+					name,
+					sectorId,
+				},
+			}))
+		industryIdByName.set(name, row.id)
+	}
+
+	// 4) Asset Tags
+	const assetTagIdByName = new Map<string, number>()
+	for (const tagName of Object.values(assetTagDefs)) {
+		const existing = await prisma.assetTag.findFirst({
+			where: { name: tagName },
+		})
+		const row =
+			existing ??
+			(await prisma.assetTag.create({
+				data: { name: tagName },
+			}))
+		assetTagIdByName.set(tagName, row.id)
+	}
+
+	// 5) Exchanges
 	const exchangeIdByName = new Map<string, number>()
 	for (const ex of Object.values(exchangeDefs)) {
 		const name = ex.name
@@ -49,20 +96,22 @@ async function main() {
 				data: {
 					name: ex.name,
 					shortName: ex.shortName ?? null,
-					timezoneName: ex.timeZoneName,
-					timezoneShortName: ex.timeZoneShortName,
+					MIC: ex.MIC,
+					code: ex.code ?? null,
+					codeAlt: ex.codeAlt ?? null,
+					timezoneName: ex.timezoneName,
+					timezoneShortName: ex.timezoneShortName,
 					country: ex.country,
 					city: ex.city,
 					website: ex.website,
-					currency: {
-						connect: { id: currencyIdByName.get(ex.currency)! },
-					},
+					emoji: ex.emoji,
+					currencyId: currencyIdByName.get(ex.currency)!,
 				},
 			}))
 		exchangeIdByName.set(name, row.id)
 	}
 
-	// 4) Assets
+	// 6) Assets
 	let createdCount = 0
 	let skippedCount = 0
 
@@ -73,9 +122,14 @@ async function main() {
 			continue
 		}
 
-		// Decide sector via industry -> sector map
-		const sectorName = industryToSectorName.get(a.industry)
-		const sectorId = sectorName ? sectorIdByName.get(sectorName) : undefined
+		const industryId = industryIdByName.get(a.industry)
+		if (!industryId) {
+			console.warn(
+				`Warning: Industry "${a.industry}" not found for asset "${a.ticker}", skipping`,
+			)
+			skippedCount++
+			continue
+		}
 
 		// Idempotency: prefer matching by ISIN if present; else fallback ticker+exchange
 		let existing = null as null | { id: number }
@@ -93,24 +147,28 @@ async function main() {
 			continue
 		}
 
+		// Prepare asset tags connection
+		const assetTagIds = a.tags
+			.map((tagName) => ({ id: assetTagIdByName.get(tagName)! }))
+			.filter((tag) => tag.id)
+
 		await prisma.asset.create({
 			data: {
-				exchange: { connect: { id: exchangeId } },
+				exchangeId,
+				industryId,
 				type: a.type,
 				isin: a.isin ?? null,
 				ticker: a.ticker,
 				name: a.name,
 				shortName: a.shortName ?? null,
+				class: 'class' in a ? (a.class ?? null) : null,
+				adr: 'adr' in a ? (a.adr ?? null) : null,
 				description: a.description ?? null,
 				imageUrl: a.imageUrl ?? null,
 				website: a.website ?? null,
-				...(sectorId ?
-					{
-						sectors: {
-							connect: [{ id: sectorId }],
-						},
-					}
-				:	{}),
+				tags: {
+					connect: assetTagIds,
+				},
 			},
 		})
 		createdCount++

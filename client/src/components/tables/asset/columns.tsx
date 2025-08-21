@@ -3,52 +3,46 @@ import type { AssetRouterOutput } from '@server/trpc/routers/asset'
 import type { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 
-import { ArrowUpDownIcon } from 'lucide-react'
-
-import { Button } from '~/components/ui'
+import { Badge } from '~/components/ui'
 
 import { AssetDialog } from '~/components'
 
-export const columns: ColumnDef<AssetRouterOutput['getAll'][number]>[] = [
+import { ColumnHeader } from '../components/column-header'
+
+export const columns: ColumnDef<AssetRouterOutput['get'][number]>[] = [
+	{
+		accessorKey: 'shortName',
+		header: ({ column }) => {
+			return <ColumnHeader column={column} title='Name' />
+		},
+	},
 	{
 		accessorKey: 'ticker',
 		header: ({ column }) => {
-			return (
-				<Button
-					variant='ghost'
-					onClick={() => {
-						column.toggleSorting(column.getIsSorted() === 'asc')
-					}}
-				>
-					Ticker
-					<ArrowUpDownIcon />
-				</Button>
-			)
+			return <ColumnHeader column={column} title='Ticker' />
 		},
 	},
 	{
 		accessorKey: 'portfolioId',
-		header: () => {
-			return <Button variant='ghost'>Portfolio id</Button>
+		header: ({ column }) => {
+			return <ColumnHeader column={column} title='Owned' />
 		},
 		cell: ({ row }) => {
-			return <div>{row.getValue('portfolioId')}</div>
+			return (
+				<Badge
+					variant={
+						row.getValue('portfolioId') ? 'default' : 'outline'
+					}
+				>
+					{row.getValue('portfolioId') ? 'Yes' : 'No'}
+				</Badge>
+			)
 		},
 	},
 	{
 		accessorKey: 'createdAt',
 		header: ({ column }) => {
-			return (
-				<Button
-					variant='ghost'
-					onClick={() => {
-						column.toggleSorting(column.getIsSorted() === 'asc')
-					}}
-				>
-					Created at
-					<ArrowUpDownIcon />
-				</Button>
-			)
+			return <ColumnHeader column={column} title='Created' />
 		},
 		cell: ({ row }) => {
 			const createdAt = dayjs(row.getValue('createdAt')).format(
@@ -61,17 +55,7 @@ export const columns: ColumnDef<AssetRouterOutput['getAll'][number]>[] = [
 	{
 		accessorKey: 'updatedAt',
 		header: ({ column }) => {
-			return (
-				<Button
-					variant='ghost'
-					onClick={() => {
-						column.toggleSorting(column.getIsSorted() === 'asc')
-					}}
-				>
-					Updated at
-					<ArrowUpDownIcon />
-				</Button>
-			)
+			return <ColumnHeader column={column} title='Updated' />
 		},
 		cell: ({ row }) => {
 			const updatedAt = dayjs(row.getValue('updatedAt')).format(

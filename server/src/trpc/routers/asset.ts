@@ -11,10 +11,22 @@ import {
 import { protectedProcedure, router } from '../trpc'
 
 export const asset = router({
-	getAll: protectedProcedure.query(async () => {
+	get: protectedProcedure.query(async () => {
 		return await prisma.asset.findMany({
 			orderBy: {
 				name: 'desc',
+			},
+		})
+	}),
+
+	getOwned: protectedProcedure.query(async ({ ctx }) => {
+		return await prisma.asset.findMany({
+			where: {
+				portfolios: {
+					some: {
+						userId: ctx.user.id,
+					},
+				},
 			},
 		})
 	}),
@@ -67,23 +79,6 @@ export const asset = router({
 		})
 	}),
 
-	getByIdWithTransactions: protectedProcedure
-		.input(id)
-		.query(async ({ input, ctx }) => {
-			return await prisma.asset.findUnique({
-				where: {
-					id: input,
-				},
-				include: {
-					transactions: {
-						where: {
-							userId: ctx.user.id,
-						},
-					},
-				},
-			})
-		}),
-
 	create: protectedProcedure
 		.input(assetCreate)
 		.mutation(async ({ input }) => {
@@ -91,12 +86,18 @@ export const asset = router({
 				exchangeId,
 				portfolioIds,
 				transactionIds,
+				industryId,
 				type,
 				ticker,
-				sectorIds,
+				tagIds,
+				shortName,
+				class: class_,
+				adr,
+				isin,
 				name,
 				description,
 				imageUrl,
+				website,
 			} = input
 
 			return await prisma.asset.create({
@@ -112,16 +113,22 @@ export const asset = router({
 							id,
 						})),
 					},
-					type,
-					ticker,
-					sectors: {
-						connect: sectorIds?.map((id) => ({
+					industryId,
+					tags: {
+						connect: tagIds?.map((id) => ({
 							id,
 						})),
 					},
+					type,
+					isin,
+					ticker,
 					name,
+					shortName,
+					class: class_,
+					adr,
 					description,
 					imageUrl,
+					website,
 				},
 			})
 		}),
@@ -134,12 +141,18 @@ export const asset = router({
 				exchangeId,
 				portfolioIds,
 				transactionIds,
+				industryId,
+				tagIds,
 				type,
+				isin,
 				ticker,
-				sectorIds,
 				name,
+				shortName,
+				class: class_,
+				adr,
 				description,
 				imageUrl,
+				website,
 			} = input
 
 			return await prisma.asset.update({
@@ -158,16 +171,22 @@ export const asset = router({
 							id,
 						})),
 					},
-					type,
-					ticker,
-					sectors: {
-						connect: sectorIds?.map((id) => ({
+					industryId,
+					tags: {
+						connect: tagIds?.map((id) => ({
 							id,
 						})),
 					},
+					type,
+					isin,
+					ticker,
 					name,
+					shortName,
+					class: class_,
+					adr,
 					description,
 					imageUrl,
+					website,
 				},
 			})
 		}),

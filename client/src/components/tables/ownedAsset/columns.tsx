@@ -1,4 +1,4 @@
-import type { TransactionRouterOutput } from '@server/trpc/routers/transaction'
+import type { AssetRouterOutput } from '@server/trpc/routers/asset'
 
 import type { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
@@ -7,9 +7,9 @@ import { ArrowUpDownIcon } from 'lucide-react'
 
 import { Button } from '~/components/ui'
 
-import { TransactionDialog } from '~/components'
+import { AssetDialog } from '~/components'
 
-export const columns: ColumnDef<TransactionRouterOutput['get'][number]>[] = [
+export const columns: ColumnDef<AssetRouterOutput['get'][number]>[] = [
 	{
 		accessorKey: 'ticker',
 		header: ({ column }) => {
@@ -84,7 +84,7 @@ export const columns: ColumnDef<TransactionRouterOutput['get'][number]>[] = [
 	{
 		id: 'edit',
 		cell: ({ row }) => {
-			return <TransactionDialog transactionId={row.original.id} />
+			return <AssetDialog assetId={row.original.id} />
 		},
 	},
 ]

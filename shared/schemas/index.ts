@@ -15,58 +15,79 @@ export const url = string.url('Must be a valid URL')
 export const assetType = z.enum(['stock', 'crypto', 'forex', 'commodity'])
 export type AssetType = z.infer<typeof assetType>
 
+export const assetClass = z.enum(['A', 'B', 'C'])
+export type AssetClass = z.infer<typeof assetClass>
+
 export const assetCreate = z.object({
 	exchangeId: id,
 	portfolioIds: z.array(id).optional(),
 	transactionIds: z.array(id).optional(),
+	industryId: id,
+	tagIds: z.array(id).optional(),
 	type: assetType,
+	isin: string.optional(),
 	ticker: string,
-	sectorIds: z.array(id).optional(),
 	name: string,
+	shortName: string.optional(),
+	class: assetClass.optional(),
+	adr: z.boolean().optional(),
 	description: string.optional(),
 	imageUrl: string.optional(),
+	website: url.optional(),
 })
 export type AssetCreate = z.infer<typeof assetCreate>
 
 export const assetUpdate = z.object({
 	id: id,
+	exchangeId: id.optional(),
 	portfolioIds: z.array(id).optional(),
 	transactionIds: z.array(id).optional(),
-	exchangeId: id.optional(),
+	industryId: id.optional(),
+	tagIds: z.array(id).optional(),
 	type: assetType.optional(),
+	isin: string.optional(),
 	ticker: string.optional(),
-	sectorIds: z.array(id).optional(),
 	name: string.optional(),
+	shortName: string.optional(),
+	class: assetClass.optional(),
+	adr: z.boolean().optional(),
 	description: string.optional(),
-	imageUrl: string.optional(),
+	imageUrl: url.optional(),
+	website: url.optional(),
 })
 export type AssetUpdate = z.infer<typeof assetUpdate>
 
 // Exchange
 export const exchangeCreate = z.object({
-	assetIds: z.array(id).optional(),
+	currencyId: id,
+	MIC: string,
+	name: string,
+	shortName: string.optional(),
+	code: string.optional(),
+	codeAlt: string.optional(),
+	timezoneName: string,
+	timezoneShortName: string.optional(),
 	country: string,
 	city: string,
-	website: string,
-	currencyId: id,
-	name: string,
-	shortName: string,
-	timezoneName: string,
-	timezoneShortName: string,
+	website: url,
+	emoji: string,
 })
 export type ExchangeCreate = z.infer<typeof exchangeCreate>
 
 export const exchangeUpdate = z.object({
 	id: id,
-	assetIds: z.array(id).optional(),
-	country: string.optional(),
-	city: string.optional(),
-	website: string.optional(),
 	currencyId: id.optional(),
+	MIC: string.optional(),
 	name: string.optional(),
 	shortName: string.optional(),
+	code: string.optional(),
+	codeAlt: string.optional(),
 	timezoneName: string.optional(),
 	timezoneShortName: string.optional(),
+	country: string.optional(),
+	city: string.optional(),
+	website: url.optional(),
+	emoji: string.optional(),
 })
 export type ExchangeUpdate = z.infer<typeof exchangeUpdate>
 

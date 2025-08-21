@@ -54,7 +54,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
 					</Select>
 				</div>
 				<div className='flex w-[100px] items-center justify-center text-xs font-medium lg:text-sm'>
-					Sida {table.getState().pagination.pageIndex + 1} av{' '}
+					Page {table.getState().pagination.pageIndex + 1} of{' '}
 					{table.getPageCount()}
 				</div>
 				<div className='flex items-center space-x-2'>

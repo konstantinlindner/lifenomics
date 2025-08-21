@@ -53,12 +53,17 @@ model Asset {
   exchangeId   Int
   portfolios   Portfolio[]
   transactions Transaction[]
-  sectors      Sector[]
+  industry     Industry      @relation(fields: [industryId], references: [id])
+  industryId   Int
+  tags         AssetTag[]
   type         AssetType
   isin         String?
   ticker       String
   name         String
   shortName    String?
+  class        String?
+  isActive     Boolean       @default(true)
+  adr          Boolean?
   description  String?
   imageUrl     String?
   website      String?
@@ -71,13 +76,17 @@ model Exchange {
   currency          Currency @relation(fields: [currencyId], references: [id])
   currencyId        Int
   assets            Asset[]
+  MIC               String
   name              String
   shortName         String?
+  code              String?
+  codeAlt           String?
   timezoneName      String
   timezoneShortName String
   country           String
   city              String
   website           String
+  emoji             String
 }
 
 enum TransactionType {
@@ -107,7 +116,25 @@ model Currency {
   name      String
 }
 
+model Industry {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  sector    Sector   @relation(fields: [sectorId], references: [id])
+  sectorId  Int
+  name      String
+  Asset     Asset[]
+}
+
 model Sector {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  industries Industry[]
+  name       String
+}
+
+model AssetTag {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

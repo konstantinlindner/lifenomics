@@ -17,6 +17,8 @@ export { UserItem } from './sidebar/user-item'
 
 // tables
 export { AssetTable } from './tables/asset'
+export { ExchangeTable } from './tables/exchange'
+export { OwnedAssetTable } from './tables/ownedAsset'
 export { TransactionTable } from './tables/transaction'
 
 // components

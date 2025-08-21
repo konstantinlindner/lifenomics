@@ -88,7 +88,7 @@ export function PortfolioDialog({
 				})
 			}
 
-			await invalidateQuery(trpc.portfolio.getAll.queryKey())
+			await invalidateQuery(trpc.portfolio.get.queryKey())
 			setOpen(false)
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
@@ -109,7 +109,7 @@ export function PortfolioDialog({
 	async function handleDelete(id: number) {
 		try {
 			await deletePortfolio.mutateAsync(id)
-			await invalidateQuery(trpc.portfolio.getAll.queryKey())
+			await invalidateQuery(trpc.portfolio.get.queryKey())
 			setOpen(false)
 		} catch (error) {
 			if (error instanceof TRPCClientError) {

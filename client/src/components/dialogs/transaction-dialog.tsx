@@ -57,7 +57,7 @@ export function TransactionDialog({
 			enabled: !!transactionId,
 		}),
 	)
-	const { data: assets } = useQuery(trpc.asset.getAll.queryOptions())
+	const { data: assets } = useQuery(trpc.asset.get.queryOptions())
 
 	const createTransaction = useMutation(
 		trpc.transaction.create.mutationOptions(),
@@ -103,7 +103,7 @@ export function TransactionDialog({
 				:	'Transaction created successfully',
 			)
 
-			await invalidateQuery(trpc.transaction.getAll.queryKey())
+			await invalidateQuery(trpc.transaction.get.queryKey())
 			setOpen(false)
 		} catch (error) {
 			log(error)

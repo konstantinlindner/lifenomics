@@ -7,7 +7,7 @@ import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
 import { protectedProcedure, router } from '../trpc'
 
 export const exchange = router({
-	getAll: protectedProcedure.query(async () => {
+	get: protectedProcedure.query(async () => {
 		return await prisma.exchange.findMany({})
 	}),
 
