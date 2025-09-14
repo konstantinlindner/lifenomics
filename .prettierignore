@@ -5,3 +5,4 @@ server/prisma/generated/
 .env
 /build/
 .vercel
+client/src/routeTree.gen.ts

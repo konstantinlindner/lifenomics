@@ -3,7 +3,7 @@ import { type Currency, currencies } from './currencies'
 export type Exchange = {
 	MIC: string
 	name: string
-	shortName?: string
+	shortName: string
 	code?: string
 	codeAlt?: string
 	timezoneName: string

@@ -108,6 +108,7 @@ const AppPortfoliosPortfolioIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AppIndexRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/admin': typeof AppAdminRoute
@@ -121,7 +122,6 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/sectors': typeof AppSectorsRoute
   '/transactions': typeof AppTransactionsRoute
-  '/': typeof AppIndexRoute
   '/portfolios/$portfolioId': typeof AppPortfoliosPortfolioIdRoute
 }
 export interface FileRoutesByTo {
@@ -163,6 +163,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/sign-in'
     | '/sign-up'
     | '/admin'
@@ -176,7 +177,6 @@ export interface FileRouteTypes {
     | '/profile'
     | '/sectors'
     | '/transactions'
-    | '/'
     | '/portfolios/$portfolioId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -240,7 +240,7 @@ declare module '@tanstack/react-router' {
     '/_app': {
       id: '/_app'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AppRouteRouteImport
       parentRoute: typeof rootRouteImport
     }

@@ -9,7 +9,6 @@
 		"watch": "tsc --watch",
 		"build": "tsc",
 		"lint": "eslint . --fix",
-		"seed": "tsx src/scripts/seed.ts",
 		"seed:transactions": "tsx src/scripts/seed-transactions.ts",
 		"postinstall": "prisma generate"
 	},

@@ -22,7 +22,7 @@ export default tseslint.config(
 			'node_modules',
 			'dist',
 			'pnpm-lock.yaml',
-			'routeTree.gen.ts',
+			'client/src/routeTree.gen.ts',
 			'client/src/components/ui/**/*',
 		],
 		languageOptions: {
