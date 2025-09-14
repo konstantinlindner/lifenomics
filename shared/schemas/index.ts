@@ -11,51 +11,48 @@ export const password = z
 	.min(8, 'Password must be at least 8 characters long')
 export const url = string.url('Must be a valid URL')
 
-// Asset
-export const assetType = z.enum(['stock', 'crypto', 'forex', 'commodity'])
-export type AssetType = z.infer<typeof assetType>
+// Company
 
-export const assetClass = z.enum(['A', 'B', 'C'])
-export type AssetClass = z.infer<typeof assetClass>
+// Stock
+export const stockClass = z.enum(['A', 'B', 'C'])
+export type StockClass = z.infer<typeof stockClass>
 
-export const assetCreate = z.object({
+export const stockCreate = z.object({
 	exchangeId: id,
 	portfolioIds: z.array(id).optional(),
 	transactionIds: z.array(id).optional(),
 	industryId: id,
 	tagIds: z.array(id).optional(),
-	type: assetType,
 	isin: string.optional(),
 	ticker: string,
 	name: string,
 	shortName: string.optional(),
-	class: assetClass.optional(),
+	class: stockClass.optional(),
 	adr: z.boolean().optional(),
 	description: string.optional(),
 	imageUrl: string.optional(),
 	website: url.optional(),
 })
-export type AssetCreate = z.infer<typeof assetCreate>
+export type StockCreate = z.infer<typeof stockCreate>
 
-export const assetUpdate = z.object({
+export const stockUpdate = z.object({
 	id: id,
 	exchangeId: id.optional(),
 	portfolioIds: z.array(id).optional(),
 	transactionIds: z.array(id).optional(),
 	industryId: id.optional(),
 	tagIds: z.array(id).optional(),
-	type: assetType.optional(),
 	isin: string.optional(),
 	ticker: string.optional(),
 	name: string.optional(),
 	shortName: string.optional(),
-	class: assetClass.optional(),
+	class: stockClass.optional(),
 	adr: z.boolean().optional(),
 	description: string.optional(),
 	imageUrl: url.optional(),
 	website: url.optional(),
 })
-export type AssetUpdate = z.infer<typeof assetUpdate>
+export type StockUpdate = z.infer<typeof stockUpdate>
 
 // Exchange
 export const exchangeCreate = z.object({
@@ -91,24 +88,9 @@ export const exchangeUpdate = z.object({
 })
 export type ExchangeUpdate = z.infer<typeof exchangeUpdate>
 
-// Portfolio
-export const portfolioCreate = z.object({
-	assetIds: z.array(id).optional(),
-	name: string,
-	comment: string.optional(),
-})
-export type PortfolioCreate = z.infer<typeof portfolioCreate>
-
-export const portfolioUpdate = z.object({
-	id: id,
-	assetIds: z.array(id).optional(),
-	name: string.optional(),
-	comment: string.optional(),
-})
-export type PortfolioUpdate = z.infer<typeof portfolioUpdate>
-
 // Transaction
 export const transactionType = z.enum(['purchase', 'sale'])
+export type TransactionType = z.infer<typeof transactionType>
 
 export const transactionCreate = z.object({
 	assetId: id,

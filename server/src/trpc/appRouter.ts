@@ -1,10 +1,9 @@
-import { asset, exchange, portfolio, transaction, user } from './routers'
+import { asset, exchange, transaction, user } from './routers'
 import { router } from './trpc'
 
 export const appRouter = router({
 	asset,
 	exchange,
-	portfolio,
 	transaction,
 	user,
 })

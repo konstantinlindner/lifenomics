@@ -67,7 +67,7 @@ export function SignUpForm() {
 					name='firstName'
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Förnamn</FormLabel>
+							<FormLabel>First name</FormLabel>
 							<FormControl>
 								<Input
 									id='firstName'
@@ -88,7 +88,7 @@ export function SignUpForm() {
 					name='lastName'
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Efternamn</FormLabel>
+							<FormLabel>Last name</FormLabel>
 							<FormControl>
 								<Input
 									id='lastName'
@@ -151,7 +151,7 @@ export function SignUpForm() {
 					>
 						{isLoading ?
 							<LoadingIndicator size='sm' />
-						:	'Skapa konto'}
+						:	'Create account'}
 					</Button>
 				</div>
 			</form>
