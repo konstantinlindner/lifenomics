@@ -1,11 +1,11 @@
-import { asset, exchange, transaction, user } from './routers'
+import { portfolio, stock, user, watchlist } from './routers'
 import { router } from './trpc'
 
 export const appRouter = router({
-	asset,
-	exchange,
-	transaction,
+	portfolio,
+	stock,
 	user,
+	watchlist,
 })
 
 export type AppRouter = typeof appRouter

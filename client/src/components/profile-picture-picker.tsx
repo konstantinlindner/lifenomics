@@ -1,12 +1,12 @@
 import { type ChangeEvent, useState } from 'react'
 
 import { trpc } from '~/clients'
-import { log } from '~/helpers'
+import { invalidateQuery, log } from '~/helpers'
 import { useUser } from '~/hooks'
 
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { TRPCClientError } from '@trpc/client'
-import dayjs from 'dayjs'
+import { upload } from '@vercel/blob/client'
 import { toast } from 'sonner'
 
 import { PencilIcon } from 'lucide-react'
@@ -29,14 +29,7 @@ export function ProfilePicturePicker() {
 	const { user } = useUser()
 	const [open, setOpen] = useState(false)
 	const [isUploading, setIsUploading] = useState(false)
-
-	const { data: profileImageFolderUrl } = useQuery(
-		trpc.user.getProfileImageFolderUrl.queryOptions(),
-	)
-	const updateUser = useMutation(trpc.user.update.mutationOptions())
-	const getProfileImageUploadUrl = useMutation(
-		trpc.user.getProfileImageUploadUrl.mutationOptions(),
-	)
+	const updateAvatar = useMutation(trpc.user.updateAvatar.mutationOptions())
 
 	if (!user) {
 		return
@@ -60,40 +53,15 @@ export function ProfilePicturePicker() {
 				return
 			}
 
-			const dateTime = dayjs().format('YYYY-MM-DD-HH-mm-ss')
-
-			const presignedUrl =
-				await getProfileImageUploadUrl.mutateAsync(dateTime)
-
-			if (!presignedUrl) {
-				setIsUploading(false)
-				toast('Något gick fel, försök igen')
-				return
-			}
-
-			const response = await fetch(presignedUrl, {
-				method: 'PUT',
-				body: file,
+			const blob = await upload(file.name, file, {
+				access: 'public',
+				handleUploadUrl: '/api/avatar/upload',
 			})
 
-			if (!response.ok) {
-				setIsUploading(false)
-				toast('Something went wrong, please try again')
-				return
-			}
-
-			if (!profileImageFolderUrl) {
-				setIsUploading(false)
-				toast('Something went wrong, please try again')
-				return
-			}
-
-			await updateUser.mutateAsync({
-				avatarUrl: `${profileImageFolderUrl}${dateTime}`,
-			})
+			await updateAvatar.mutateAsync({ avatarUrl: blob.url })
 
 			setOpen(false)
-			window.location.reload()
+			await invalidateQuery(trpc.user.get.queryKey())
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
 				toast(error.message)
@@ -118,7 +86,7 @@ export function ProfilePicturePicker() {
 								<PencilIcon strokeWidth='3' size={36} />
 							</AvatarFallback>
 						</Avatar>
-						<div className='absolute bottom-0 left-0 right-0 top-0 flex size-40 items-center justify-center rounded-full text-white opacity-0 hover:opacity-100'>
+						<div className='absolute top-0 right-0 bottom-0 left-0 flex size-40 items-center justify-center rounded-full text-white opacity-0 hover:opacity-100'>
 							<PencilIcon strokeWidth='3' size={36} />
 						</div>
 					</div>

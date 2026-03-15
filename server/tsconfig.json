@@ -11,12 +11,19 @@
 		"composite": true,
 		"rootDir": ".",
 		"types": ["node"],
+		"jsx": "react-jsx",
 		"paths": {
 			"~/*": ["./src/*"],
 			"~/routers": ["./src/trpc/routers"],
-			"@prisma/client": ["./prisma/generated"]
+			"@prisma/client": ["./prisma/generated/prisma/client"]
 		}
 	},
-	"include": ["src/**/*.ts", "prisma.config.ts", "src/seed.ts"],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"prisma.config.ts",
+		"src/seed.ts",
+		"prisma/generated/**/*.ts"
+	],
 	"exclude": ["node_modules", "dist"]
 }

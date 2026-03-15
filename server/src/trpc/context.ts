@@ -1,14 +1,12 @@
+import { auth } from '~/auth'
 import { prisma } from '~/prisma'
-import { s3 } from '~/s3'
-import { verifyJwt } from '~/utils'
 
 import type { User } from '@prisma/client'
 import { Request, Response } from '@tinyhttp/app'
-import { z } from 'zod'
+import { fromNodeHeaders } from 'better-auth/node'
 
 type CreateContextReturn = {
 	prisma: typeof prisma
-	s3: typeof s3
 	user: User | null
 	res: Response
 }
@@ -21,24 +19,28 @@ export async function createContext(args: {
 
 	return {
 		prisma,
-		s3,
 		user,
 		res: args.res,
 	}
 }
 
-async function getUser(req: Request) {
-	const sessionToken = z.string().safeParse(req.cookies.ln_session_token)
+async function getUser(req: Request): Promise<User | null> {
+	const session = await auth.api.getSession({
+		headers: fromNodeHeaders(
+			req.headers as Record<string, string | string[] | undefined>,
+		),
+	})
 
-	if (!sessionToken.success) {
+	if (!session?.user?.id) {
 		return null
 	}
 
-	const userId = verifyJwt(sessionToken.data)
+	const userId =
+		typeof session.user.id === 'number' ?
+			session.user.id
+		:	Number(session.user.id)
 
-	if (!userId) {
-		return null
-	}
+	if (Number.isNaN(userId)) return null
 
 	return await prisma.user.findUnique({
 		where: {

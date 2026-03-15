@@ -1,8 +1,6 @@
-import { useSidebar, useUser } from '~/hooks'
+import { useSidebar } from '~/hooks'
 
 import { Link } from '@tanstack/react-router'
-
-import { ShieldUserIcon } from 'lucide-react'
 
 import {
 	SidebarGroup,
@@ -19,7 +17,6 @@ import type { NavItem } from './app-sidebar'
 type ItemGroupsProps = Record<string, NavItem[]>
 
 export function ItemGroups({ items }: { items: ItemGroupsProps }) {
-	const { user } = useUser()
 	const { open } = useSidebar()
 
 	return (
@@ -70,22 +67,6 @@ export function ItemGroups({ items }: { items: ItemGroupsProps }) {
 					</SidebarMenu>
 				</SidebarGroup>
 			))}
-
-			{user?.role === 'admin' && (
-				<SidebarGroup>
-					<SidebarGroupLabel>Admin</SidebarGroupLabel>
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<Link to='/admin'>
-								<SidebarMenuButton>
-									<ShieldUserIcon />
-									Admin
-								</SidebarMenuButton>
-							</Link>
-						</SidebarMenuItem>
-					</SidebarMenu>
-				</SidebarGroup>
-			)}
 		</>
 	)
 }

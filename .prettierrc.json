@@ -4,6 +4,7 @@
 		"prettier-plugin-tailwindcss"
 	],
 	"experimentalTernaries": true,
+	"experimentalOperatorPosition": "start",
 	"singleQuote": true,
 	"jsxSingleQuote": true,
 	"useTabs": true,

@@ -13,29 +13,36 @@
 		"postinstall": "prisma generate"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.862.0",
-		"@aws-sdk/s3-request-presigner": "^3.862.0",
 		"@lifenomics/shared": "link:../shared",
-		"@prisma/client": "^6.13.0",
-		"@t3-oss/env-core": "^0.10.1",
-		"@tinyhttp/app": "^2.5.2",
+		"@prisma/adapter-pg": "^7.3.0",
+		"@prisma/client": "^7.3.0",
+		"@react-email/components": "^1.0.7",
+		"@react-email/render": "^2.0.4",
+		"@react-email/tailwind": "2.0.4",
+		"@t3-oss/env-core": "^0.13.10",
+		"@tinyhttp/app": "^3.0.4",
 		"@tinyhttp/cookie-parser": "^2.0.6",
 		"@tinyhttp/cors": "^2.0.1",
 		"@tinyhttp/logger": "^2.1.0",
-		"@trpc/server": "11.1.2",
-		"argon2": "^0.43.1",
-		"chalk": "^5.5.0",
-		"dayjs": "^1.11.13",
-		"jsonwebtoken": "^9.0.2",
+		"@trpc/server": "11.9.0",
+		"better-auth": "^1.4.18",
+		"chalk": "^5.6.2",
+		"dayjs": "^1.11.19",
+		"jsonwebtoken": "^9.0.3",
 		"micro": "^10.0.1",
-		"stripe": "^18.4.0",
-		"zod": "^3.25.76"
+		"pg": "^8.18.0",
+		"react": "^19.2.4",
+		"resend": "^6.9.1",
+		"stripe": "^20.3.1",
+		"zod": "^4.3.6",
+		"@vercel/blob": "^0.25.0"
 	},
 	"devDependencies": {
 		"@types/jsonwebtoken": "^9.0.10",
-		"@types/node": "^24.2.1",
-		"dotenv": "^16.6.1",
-		"prisma": "^6.13.0",
-		"tsx": "^4.20.3"
+		"@types/node": "^25.2.1",
+		"@types/react": "^19.2.13",
+		"dotenv": "^17.2.4",
+		"prisma": "^7.3.0",
+		"tsx": "^4.21.0"
 	}
 }

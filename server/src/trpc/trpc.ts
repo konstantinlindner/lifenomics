@@ -21,19 +21,6 @@ const t = initTRPC.context<Context>().create({
 export const router = t.router
 export const publicProcedure = t.procedure
 
-const isAdminMiddleware = t.middleware(({ ctx, next }) => {
-	if (ctx.user?.role !== 'admin') {
-		throw new TRPCError({
-			code: 'UNAUTHORIZED',
-			message: 'You must be an admin to access this resource.',
-		})
-	}
-
-	return next({ ctx: { user: ctx.user } })
-})
-
-export const adminProcedure = t.procedure.use(isAdminMiddleware)
-
 const protectedMiddleware = t.middleware(({ ctx, next }) => {
 	if (!ctx.user) {
 		throw new TRPCError({

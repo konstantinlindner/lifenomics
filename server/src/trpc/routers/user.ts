@@ -1,17 +1,7 @@
-import { env } from '~/env'
-
-import {
-	id,
-	userSignIn,
-	userSignUp,
-	userUpdate,
-} from '@lifenomics/shared/schemas'
+import { id, userUpdate } from '@lifenomics/shared/schemas'
 
 import { prisma } from '~/prisma'
-import { hashPassword, isPasswordMatch, signJwt } from '~/utils'
 
-import { PutObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import {
 	TRPCError,
 	type inferRouterInputs,
@@ -19,90 +9,9 @@ import {
 } from '@trpc/server'
 import { z } from 'zod'
 
-import { protectedProcedure, publicProcedure, router } from '../trpc'
+import { protectedProcedure, router } from '../trpc'
 
 export const user = router({
-	signIn: publicProcedure
-		.input(userSignIn)
-		.mutation(async ({ input, ctx }) => {
-			const { email, password } = input
-
-			const user = await prisma.user.findUnique({
-				where: {
-					email,
-				},
-			})
-
-			if (!user) {
-				throw new TRPCError({
-					code: 'UNAUTHORIZED',
-					message: 'No user found with that email',
-				})
-			}
-
-			const passwordsMatch = await isPasswordMatch(
-				user.password,
-				password,
-			)
-
-			if (!passwordsMatch) {
-				throw new TRPCError({
-					code: 'UNAUTHORIZED',
-					message: 'Incorrect password',
-				})
-			}
-
-			const token = signJwt(user.id)
-
-			ctx.res.cookie('ln_session_token', token, {
-				httpOnly: true,
-				secure: env.NODE_ENV !== 'development',
-				sameSite: 'strict',
-				maxAge: 30 * 24 * 60 * 60 * 1000,
-			})
-		}),
-
-	signUp: publicProcedure
-		.input(userSignUp)
-		.mutation(async ({ input, ctx }) => {
-			const { firstName, lastName, email, password } = input
-
-			const existingUser = await ctx.prisma.user.findUnique({
-				where: { email: input.email },
-			})
-
-			if (existingUser) {
-				throw new TRPCError({
-					code: 'BAD_REQUEST',
-					message: 'User already exists',
-				})
-			}
-
-			const hashedPassword = await hashPassword(password)
-
-			const user = await prisma.user.create({
-				data: {
-					firstName: firstName,
-					lastName: lastName,
-					email: email,
-					password: hashedPassword,
-				},
-			})
-
-			const token = signJwt(user.id)
-
-			ctx.res.cookie('ln_session_token', token, {
-				httpOnly: true,
-				secure: env.NODE_ENV !== 'development',
-				sameSite: 'strict',
-				maxAge: 30 * 24 * 60 * 60 * 1000,
-			})
-		}),
-
-	signOut: protectedProcedure.mutation(({ ctx }) => {
-		ctx.res.clearCookie('ln_session_token')
-	}),
-
 	get: protectedProcedure.query(async ({ ctx }) => {
 		const user = await prisma.user.findUnique({
 			where: {
@@ -144,22 +53,18 @@ export const user = router({
 			return user
 		}),
 
-	getProfileImageUploadUrl: protectedProcedure
-		.input(z.string())
+	updateAvatar: protectedProcedure
+		.input(z.object({ avatarUrl: z.url() }))
 		.mutation(async ({ input, ctx }) => {
-			const putObjectCommand = new PutObjectCommand({
-				Bucket: env.AWS_S3_BUCKET_NAME,
-				Key: `profile-images/${ctx.user.id}/${input}`,
+			return await prisma.user.update({
+				where: {
+					id: ctx.user.id,
+				},
+				data: {
+					avatarUrl: input.avatarUrl,
+				},
 			})
-
-			return await getSignedUrl(ctx.s3, putObjectCommand)
 		}),
-
-	getProfileImageFolderUrl: protectedProcedure.query(({ ctx }) => {
-		const imageUrl = `https://${env.AWS_S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/profile-images/${ctx.user.id}/`
-
-		return imageUrl
-	}),
 
 	getById: protectedProcedure.input(id).query(async ({ input }) => {
 		const user = await prisma.user.findUnique({
@@ -186,8 +91,5 @@ export const user = router({
 export type UserRouter = typeof user
 export type UserRouterInput = inferRouterInputs<UserRouter>
 export type UserRouterOutput = inferRouterOutputs<UserRouter>
-
-export type SignInInput = UserRouterInput['signIn']
-export type SignUpInput = UserRouterInput['signUp']
 
 export type User = UserRouterOutput['get']

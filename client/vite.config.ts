@@ -13,7 +13,9 @@ export default defineConfig({
 		}),
 		react(),
 		tailwindcss(),
-		tsconfigPaths(),
+		tsconfigPaths({
+			projects: ['tsconfig.app.json'],
+		}),
 	],
 	server: {
 		proxy: {

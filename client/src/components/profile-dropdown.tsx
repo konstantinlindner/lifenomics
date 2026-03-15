@@ -1,8 +1,7 @@
-import { trpc } from '~/clients'
 import { useUser } from '~/hooks'
 
-import { useMutation } from '@tanstack/react-query'
 import { Link, useRouter } from '@tanstack/react-router'
+import { authClient } from '~/lib/auth-client'
 
 import {
 	Avatar,
@@ -19,14 +18,18 @@ import {
 
 export function ProfileDropdown() {
 	const router = useRouter()
-	const signOut = useMutation(trpc.user.signOut.mutationOptions())
 	const { user } = useUser()
 
 	if (!user) return null
 
 	async function handleSignOutClick() {
-		await signOut.mutateAsync()
-		await router.invalidate()
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					void router.invalidate()
+				},
+			},
+		})
 	}
 
 	return (

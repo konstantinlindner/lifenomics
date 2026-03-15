@@ -3,14 +3,12 @@ import type { Table } from '@tanstack/react-table'
 import { FilterPopover } from './filter-popover'
 
 const filterOptions = [
-	{
-		name: 'ticker',
-		title: 'Ticker',
-	},
-	{
-		name: 'portfolioId',
-		title: 'Portfolio',
-	},
+	{ name: 'ticker', title: 'Ticker' },
+	{ name: 'companyName', title: 'Company' },
+	{ name: 'exchangeName', title: 'Exchange' },
+	{ name: 'name', title: 'Name' },
+	{ name: 'country', title: 'Country' },
+	{ name: 'transactionType', title: 'Type' },
 ] as const
 
 type FilterOptionNames = (typeof filterOptions)[number]['name']
@@ -31,12 +29,13 @@ export function Filter<TData>({ table, filter }: FilterProps<TData>) {
 	const selectedValues = new Set(column?.getFilterValue() as string[])
 
 	const handleSelect = (value: string) => {
-		if (selectedValues.has(value)) {
-			selectedValues.delete(value)
+		const next = new Set(selectedValues)
+		if (next.has(value)) {
+			next.delete(value)
 		} else {
-			selectedValues.add(value)
+			next.add(value)
 		}
-		const filterValues = Array.from(selectedValues)
+		const filterValues = Array.from(next)
 		column?.setFilterValue(filterValues.length ? filterValues : undefined)
 	}
 

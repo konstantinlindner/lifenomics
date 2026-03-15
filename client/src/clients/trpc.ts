@@ -16,8 +16,8 @@ export const queryClient = new QueryClient({
 		queries: {
 			retry: (failureCount, error) => {
 				if (
-					isTRPCClientError(error) &&
-					error.data?.code === 'UNAUTHORIZED'
+					isTRPCClientError(error)
+					&& error.data?.code === 'UNAUTHORIZED'
 				) {
 					return false
 				}

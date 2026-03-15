@@ -1,9 +1,8 @@
-import { trpc } from '~/clients'
 import { cn } from '~/helpers'
 
-import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import type { ClassValue } from 'clsx'
+import { authClient } from '~/lib/auth-client'
 
 import { LogOutIcon } from 'lucide-react'
 
@@ -17,11 +16,15 @@ export function SignOutButton({
 	showText = false,
 }: SignOutButtonProps) {
 	const router = useRouter()
-	const signOut = useMutation(trpc.user.signOut.mutationOptions())
 
 	async function handleSignOutClick() {
-		await signOut.mutateAsync()
-		await router.invalidate()
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					void router.invalidate()
+				},
+			},
+		})
 	}
 
 	return (

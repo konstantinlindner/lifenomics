@@ -18,7 +18,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	component: Root,
 	notFoundComponent: NotFound,
 	beforeLoad: async ({ context, location }) => {
-		const routesWithOwnAuthHandling = ['/sign-in', '/sign-up']
+		const routesWithOwnAuthHandling = [
+			'/sign-in',
+			'/sign-up',
+			'/forgot-password',
+			'/reset-password',
+		]
 		const routeHasOwnAuthHandling = routesWithOwnAuthHandling.includes(
 			location.pathname,
 		)
@@ -41,8 +46,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function Root() {
 	return (
-		<main className='bg-background flex h-dvh w-dvw'>
-			<div className='text-primary bg-background min-h-0 flex-1 overflow-auto'>
+		<main className='flex h-dvh w-dvw bg-background'>
+			<div className='min-h-0 flex-1 overflow-auto bg-background text-primary'>
 				<Outlet />
 			</div>
 			<Toaster />

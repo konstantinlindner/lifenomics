@@ -1,115 +1,36 @@
 import { z } from 'zod'
 
 // Utilities
-export const string = z.string().trim().min(2, 'Must be at least 2 characters')
+export const string = z
+	.string()
+	.trim()
+	.min(2, { error: 'Must be at least 2 characters' })
 export const positiveInt = z.number().int().positive()
 export const defaultFalseBoolean = z.boolean().default(false)
 export const id = positiveInt
-export const email = string.email('Must be a valid email address')
+export const email = z.email({ error: 'Must be a valid email address' })
+// Matches min. password length in auth.ts
 export const password = z
 	.string()
-	.min(8, 'Password must be at least 8 characters long')
-export const url = string.url('Must be a valid URL')
+	.min(12, { error: 'Password must be at least 12 characters long' })
+export const url = z.url({ error: 'Must be a valid URL' })
 
-// Company
-
-// Stock
-export const stockClass = z.enum(['A', 'B', 'C'])
-export type StockClass = z.infer<typeof stockClass>
-
-export const stockCreate = z.object({
-	exchangeId: id,
-	portfolioIds: z.array(id).optional(),
-	transactionIds: z.array(id).optional(),
-	industryId: id,
-	tagIds: z.array(id).optional(),
-	isin: string.optional(),
-	ticker: string,
-	name: string,
-	shortName: string.optional(),
-	class: stockClass.optional(),
-	adr: z.boolean().optional(),
-	description: string.optional(),
-	imageUrl: string.optional(),
-	website: url.optional(),
+// Portfolio position (symbol-based, no DB Stock required)
+export const positionCreate = z.object({
+	symbol: z.string().min(1).max(20),
+	quantity: z.number().positive(),
+	averagePurchasePrice: z.number().positive(),
+	currency: z.string().min(1).max(10),
 })
-export type StockCreate = z.infer<typeof stockCreate>
+export type PositionCreate = z.infer<typeof positionCreate>
 
-export const stockUpdate = z.object({
+export const positionUpdate = z.object({
 	id: id,
-	exchangeId: id.optional(),
-	portfolioIds: z.array(id).optional(),
-	transactionIds: z.array(id).optional(),
-	industryId: id.optional(),
-	tagIds: z.array(id).optional(),
-	isin: string.optional(),
-	ticker: string.optional(),
-	name: string.optional(),
-	shortName: string.optional(),
-	class: stockClass.optional(),
-	adr: z.boolean().optional(),
-	description: string.optional(),
-	imageUrl: url.optional(),
-	website: url.optional(),
+	quantity: z.number().positive().optional(),
+	averagePurchasePrice: z.number().positive().optional(),
+	currency: z.string().min(1).max(10).optional(),
 })
-export type StockUpdate = z.infer<typeof stockUpdate>
-
-// Exchange
-export const exchangeCreate = z.object({
-	currencyId: id,
-	MIC: string,
-	name: string,
-	shortName: string.optional(),
-	code: string.optional(),
-	codeAlt: string.optional(),
-	timezoneName: string,
-	timezoneShortName: string.optional(),
-	country: string,
-	city: string,
-	website: url,
-	emoji: string,
-})
-export type ExchangeCreate = z.infer<typeof exchangeCreate>
-
-export const exchangeUpdate = z.object({
-	id: id,
-	currencyId: id.optional(),
-	MIC: string.optional(),
-	name: string.optional(),
-	shortName: string.optional(),
-	code: string.optional(),
-	codeAlt: string.optional(),
-	timezoneName: string.optional(),
-	timezoneShortName: string.optional(),
-	country: string.optional(),
-	city: string.optional(),
-	website: url.optional(),
-	emoji: string.optional(),
-})
-export type ExchangeUpdate = z.infer<typeof exchangeUpdate>
-
-// Transaction
-export const transactionType = z.enum(['purchase', 'sale'])
-export type TransactionType = z.infer<typeof transactionType>
-
-export const transactionCreate = z.object({
-	assetId: id,
-	transactionType: transactionType,
-	quantity: z.number(),
-	price: z.number(),
-	timestamp: z.date(),
-})
-export type TransactionCreate = z.infer<typeof transactionCreate>
-
-export const transactionUpdate = z.object({
-	id: id,
-	assetId: id.optional(),
-	transactionType: transactionType.optional(),
-	quantity: z.number().optional(),
-	price: z.number().optional(),
-	timestamp: z.date().optional(),
-})
-export type TransactionUpdate = z.infer<typeof transactionUpdate>
+export type PositionUpdate = z.infer<typeof positionUpdate>
 
 // User
 export const userSignIn = z.object({
@@ -144,7 +65,7 @@ export const userUpdate = z
 			return true
 		},
 		{
-			message: "Passwords don't match",
+			error: "Passwords don't match",
 			path: ['confirmPassword'],
 		},
 	)
@@ -157,7 +78,7 @@ export const userUpdate = z
 			return true
 		},
 		{
-			message: 'Current password is required when changing password',
+			error: 'Current password is required when changing password',
 			path: ['currentPassword'],
 		},
 	)

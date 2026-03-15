@@ -11,20 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as AppTransactionsRouteImport } from './routes/_app/transactions'
-import { Route as AppSectorsRouteImport } from './routes/_app/sectors'
+import { Route as AppStocksRouteImport } from './routes/_app/stocks'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
-import { Route as AppPortfoliosRouteImport } from './routes/_app/portfolios'
-import { Route as AppMyAssetsRouteImport } from './routes/_app/my-assets'
-import { Route as AppIndustriesRouteImport } from './routes/_app/industries'
-import { Route as AppExchangesRouteImport } from './routes/_app/exchanges'
-import { Route as AppDividendsRouteImport } from './routes/_app/dividends'
-import { Route as AppCurrenciesRouteImport } from './routes/_app/currencies'
-import { Route as AppAssetsRouteImport } from './routes/_app/assets'
-import { Route as AppAdminRouteImport } from './routes/_app/admin'
-import { Route as AppPortfoliosPortfolioIdRouteImport } from './routes/_app/portfolios.$portfolioId'
+import { Route as AppStocksIndexRouteImport } from './routes/_app/stocks.index'
+import { Route as AppStocksSymbolRouteImport } from './routes/_app/stocks.$symbol'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -36,6 +30,16 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRouteRoute = AppRouteRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -45,14 +49,9 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppTransactionsRoute = AppTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppSectorsRoute = AppSectorsRouteImport.update({
-  id: '/sectors',
-  path: '/sectors',
+const AppStocksRoute = AppStocksRouteImport.update({
+  id: '/stocks',
+  path: '/stocks',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppProfileRoute = AppProfileRouteImport.update({
@@ -60,163 +59,91 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppPortfoliosRoute = AppPortfoliosRouteImport.update({
-  id: '/portfolios',
-  path: '/portfolios',
-  getParentRoute: () => AppRouteRoute,
+const AppStocksIndexRoute = AppStocksIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppStocksRoute,
 } as any)
-const AppMyAssetsRoute = AppMyAssetsRouteImport.update({
-  id: '/my-assets',
-  path: '/my-assets',
-  getParentRoute: () => AppRouteRoute,
+const AppStocksSymbolRoute = AppStocksSymbolRouteImport.update({
+  id: '/$symbol',
+  path: '/$symbol',
+  getParentRoute: () => AppStocksRoute,
 } as any)
-const AppIndustriesRoute = AppIndustriesRouteImport.update({
-  id: '/industries',
-  path: '/industries',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppExchangesRoute = AppExchangesRouteImport.update({
-  id: '/exchanges',
-  path: '/exchanges',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppDividendsRoute = AppDividendsRouteImport.update({
-  id: '/dividends',
-  path: '/dividends',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppCurrenciesRoute = AppCurrenciesRouteImport.update({
-  id: '/currencies',
-  path: '/currencies',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppAssetsRoute = AppAssetsRouteImport.update({
-  id: '/assets',
-  path: '/assets',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppAdminRoute = AppAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppPortfoliosPortfolioIdRoute =
-  AppPortfoliosPortfolioIdRouteImport.update({
-    id: '/$portfolioId',
-    path: '/$portfolioId',
-    getParentRoute: () => AppPortfoliosRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/admin': typeof AppAdminRoute
-  '/assets': typeof AppAssetsRoute
-  '/currencies': typeof AppCurrenciesRoute
-  '/dividends': typeof AppDividendsRoute
-  '/exchanges': typeof AppExchangesRoute
-  '/industries': typeof AppIndustriesRoute
-  '/my-assets': typeof AppMyAssetsRoute
-  '/portfolios': typeof AppPortfoliosRouteWithChildren
   '/profile': typeof AppProfileRoute
-  '/sectors': typeof AppSectorsRoute
-  '/transactions': typeof AppTransactionsRoute
-  '/portfolios/$portfolioId': typeof AppPortfoliosPortfolioIdRoute
+  '/stocks': typeof AppStocksRouteWithChildren
+  '/stocks/$symbol': typeof AppStocksSymbolRoute
+  '/stocks/': typeof AppStocksIndexRoute
 }
 export interface FileRoutesByTo {
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/admin': typeof AppAdminRoute
-  '/assets': typeof AppAssetsRoute
-  '/currencies': typeof AppCurrenciesRoute
-  '/dividends': typeof AppDividendsRoute
-  '/exchanges': typeof AppExchangesRoute
-  '/industries': typeof AppIndustriesRoute
-  '/my-assets': typeof AppMyAssetsRoute
-  '/portfolios': typeof AppPortfoliosRouteWithChildren
   '/profile': typeof AppProfileRoute
-  '/sectors': typeof AppSectorsRoute
-  '/transactions': typeof AppTransactionsRoute
   '/': typeof AppIndexRoute
-  '/portfolios/$portfolioId': typeof AppPortfoliosPortfolioIdRoute
+  '/stocks/$symbol': typeof AppStocksSymbolRoute
+  '/stocks': typeof AppStocksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/_app/admin': typeof AppAdminRoute
-  '/_app/assets': typeof AppAssetsRoute
-  '/_app/currencies': typeof AppCurrenciesRoute
-  '/_app/dividends': typeof AppDividendsRoute
-  '/_app/exchanges': typeof AppExchangesRoute
-  '/_app/industries': typeof AppIndustriesRoute
-  '/_app/my-assets': typeof AppMyAssetsRoute
-  '/_app/portfolios': typeof AppPortfoliosRouteWithChildren
   '/_app/profile': typeof AppProfileRoute
-  '/_app/sectors': typeof AppSectorsRoute
-  '/_app/transactions': typeof AppTransactionsRoute
+  '/_app/stocks': typeof AppStocksRouteWithChildren
   '/_app/': typeof AppIndexRoute
-  '/_app/portfolios/$portfolioId': typeof AppPortfoliosPortfolioIdRoute
+  '/_app/stocks/$symbol': typeof AppStocksSymbolRoute
+  '/_app/stocks/': typeof AppStocksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/forgot-password'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
-    | '/admin'
-    | '/assets'
-    | '/currencies'
-    | '/dividends'
-    | '/exchanges'
-    | '/industries'
-    | '/my-assets'
-    | '/portfolios'
     | '/profile'
-    | '/sectors'
-    | '/transactions'
-    | '/portfolios/$portfolioId'
+    | '/stocks'
+    | '/stocks/$symbol'
+    | '/stocks/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/forgot-password'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
-    | '/admin'
-    | '/assets'
-    | '/currencies'
-    | '/dividends'
-    | '/exchanges'
-    | '/industries'
-    | '/my-assets'
-    | '/portfolios'
     | '/profile'
-    | '/sectors'
-    | '/transactions'
     | '/'
-    | '/portfolios/$portfolioId'
+    | '/stocks/$symbol'
+    | '/stocks'
   id:
     | '__root__'
     | '/_app'
+    | '/forgot-password'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
-    | '/_app/admin'
-    | '/_app/assets'
-    | '/_app/currencies'
-    | '/_app/dividends'
-    | '/_app/exchanges'
-    | '/_app/industries'
-    | '/_app/my-assets'
-    | '/_app/portfolios'
     | '/_app/profile'
-    | '/_app/sectors'
-    | '/_app/transactions'
+    | '/_app/stocks'
     | '/_app/'
-    | '/_app/portfolios/$portfolioId'
+    | '/_app/stocks/$symbol'
+    | '/_app/stocks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
 }
@@ -237,6 +164,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -251,18 +192,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/_app/transactions': {
-      id: '/_app/transactions'
-      path: '/transactions'
-      fullPath: '/transactions'
-      preLoaderRoute: typeof AppTransactionsRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/sectors': {
-      id: '/_app/sectors'
-      path: '/sectors'
-      fullPath: '/sectors'
-      preLoaderRoute: typeof AppSectorsRouteImport
+    '/_app/stocks': {
+      id: '/_app/stocks'
+      path: '/stocks'
+      fullPath: '/stocks'
+      preLoaderRoute: typeof AppStocksRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/profile': {
@@ -272,111 +206,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/_app/portfolios': {
-      id: '/_app/portfolios'
-      path: '/portfolios'
-      fullPath: '/portfolios'
-      preLoaderRoute: typeof AppPortfoliosRouteImport
-      parentRoute: typeof AppRouteRoute
+    '/_app/stocks/': {
+      id: '/_app/stocks/'
+      path: '/'
+      fullPath: '/stocks/'
+      preLoaderRoute: typeof AppStocksIndexRouteImport
+      parentRoute: typeof AppStocksRoute
     }
-    '/_app/my-assets': {
-      id: '/_app/my-assets'
-      path: '/my-assets'
-      fullPath: '/my-assets'
-      preLoaderRoute: typeof AppMyAssetsRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/industries': {
-      id: '/_app/industries'
-      path: '/industries'
-      fullPath: '/industries'
-      preLoaderRoute: typeof AppIndustriesRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/exchanges': {
-      id: '/_app/exchanges'
-      path: '/exchanges'
-      fullPath: '/exchanges'
-      preLoaderRoute: typeof AppExchangesRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/dividends': {
-      id: '/_app/dividends'
-      path: '/dividends'
-      fullPath: '/dividends'
-      preLoaderRoute: typeof AppDividendsRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/currencies': {
-      id: '/_app/currencies'
-      path: '/currencies'
-      fullPath: '/currencies'
-      preLoaderRoute: typeof AppCurrenciesRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/assets': {
-      id: '/_app/assets'
-      path: '/assets'
-      fullPath: '/assets'
-      preLoaderRoute: typeof AppAssetsRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/admin': {
-      id: '/_app/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AppAdminRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/portfolios/$portfolioId': {
-      id: '/_app/portfolios/$portfolioId'
-      path: '/$portfolioId'
-      fullPath: '/portfolios/$portfolioId'
-      preLoaderRoute: typeof AppPortfoliosPortfolioIdRouteImport
-      parentRoute: typeof AppPortfoliosRoute
+    '/_app/stocks/$symbol': {
+      id: '/_app/stocks/$symbol'
+      path: '/$symbol'
+      fullPath: '/stocks/$symbol'
+      preLoaderRoute: typeof AppStocksSymbolRouteImport
+      parentRoute: typeof AppStocksRoute
     }
   }
 }
 
-interface AppPortfoliosRouteChildren {
-  AppPortfoliosPortfolioIdRoute: typeof AppPortfoliosPortfolioIdRoute
+interface AppStocksRouteChildren {
+  AppStocksSymbolRoute: typeof AppStocksSymbolRoute
+  AppStocksIndexRoute: typeof AppStocksIndexRoute
 }
 
-const AppPortfoliosRouteChildren: AppPortfoliosRouteChildren = {
-  AppPortfoliosPortfolioIdRoute: AppPortfoliosPortfolioIdRoute,
+const AppStocksRouteChildren: AppStocksRouteChildren = {
+  AppStocksSymbolRoute: AppStocksSymbolRoute,
+  AppStocksIndexRoute: AppStocksIndexRoute,
 }
 
-const AppPortfoliosRouteWithChildren = AppPortfoliosRoute._addFileChildren(
-  AppPortfoliosRouteChildren,
+const AppStocksRouteWithChildren = AppStocksRoute._addFileChildren(
+  AppStocksRouteChildren,
 )
 
 interface AppRouteRouteChildren {
-  AppAdminRoute: typeof AppAdminRoute
-  AppAssetsRoute: typeof AppAssetsRoute
-  AppCurrenciesRoute: typeof AppCurrenciesRoute
-  AppDividendsRoute: typeof AppDividendsRoute
-  AppExchangesRoute: typeof AppExchangesRoute
-  AppIndustriesRoute: typeof AppIndustriesRoute
-  AppMyAssetsRoute: typeof AppMyAssetsRoute
-  AppPortfoliosRoute: typeof AppPortfoliosRouteWithChildren
   AppProfileRoute: typeof AppProfileRoute
-  AppSectorsRoute: typeof AppSectorsRoute
-  AppTransactionsRoute: typeof AppTransactionsRoute
+  AppStocksRoute: typeof AppStocksRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppAdminRoute: AppAdminRoute,
-  AppAssetsRoute: AppAssetsRoute,
-  AppCurrenciesRoute: AppCurrenciesRoute,
-  AppDividendsRoute: AppDividendsRoute,
-  AppExchangesRoute: AppExchangesRoute,
-  AppIndustriesRoute: AppIndustriesRoute,
-  AppMyAssetsRoute: AppMyAssetsRoute,
-  AppPortfoliosRoute: AppPortfoliosRouteWithChildren,
   AppProfileRoute: AppProfileRoute,
-  AppSectorsRoute: AppSectorsRoute,
-  AppTransactionsRoute: AppTransactionsRoute,
+  AppStocksRoute: AppStocksRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -386,6 +255,8 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
 }

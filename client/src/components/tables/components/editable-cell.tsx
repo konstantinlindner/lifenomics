@@ -18,10 +18,18 @@ export function EditableCell({ value, onChange }: EditableCellProps) {
 			<input
 				type='text'
 				value={inputValue}
-				onChange={(e) => setInputValue(e.target.value)}
+				onChange={(e) => {
+					setInputValue(e.target.value)
+				}}
 				onBlur={handleBlur}
 				autoFocus
 				className='bg-background p-1'
 			/>
-		:	<div onClick={() => setIsEditing(true)}>{value}</div>
+		:	<div
+				onClick={() => {
+					setIsEditing(true)
+				}}
+			>
+				{value}
+			</div>
 }

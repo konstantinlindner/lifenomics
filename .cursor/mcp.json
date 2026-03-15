@@ -1,0 +1,16 @@
+{
+	"mcpServers": {
+		"Prisma-Remote": {
+			"command": "npx -y mcp-remote https://mcp.prisma.io/mcp",
+			"env": {},
+			"args": []
+		},
+		"Better Auth": {
+			"url": "https://mcp.inkeep.com/better-auth/mcp",
+			"headers": {}
+		},
+		"inkeepMcp": {
+			"url": "https://mcp.inkeep.com/zod/mcp"
+		}
+	}
+}

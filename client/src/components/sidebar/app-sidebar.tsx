@@ -5,18 +5,7 @@ import { useSidebar } from '~/hooks'
 
 import type { LinkProps } from '@tanstack/react-router'
 
-import {
-	BriefcaseBusinessIcon,
-	ChartColumnIcon,
-	ChartPieIcon,
-	DollarSignIcon,
-	FactoryIcon,
-	GlobeIcon,
-	HandCoinsIcon,
-	type LucideIcon,
-	PercentIcon,
-	ScrollIcon,
-} from 'lucide-react'
+import { ChartColumnIcon, type LucideIcon, ScrollIcon } from 'lucide-react'
 
 import {
 	Sidebar,
@@ -43,58 +32,16 @@ export type NavItem = {
 }
 
 const data = {
-	'My portfolio': [
+	Main: [
 		{
 			title: 'Home',
 			url: '/',
 			icon: ChartColumnIcon,
 		},
 		{
-			title: 'Portfolios',
-			url: '/portfolios',
-			icon: ChartPieIcon,
-		},
-		{
-			title: 'Assets',
-			url: '/my-assets',
+			title: 'Stocks',
+			url: '/stocks',
 			icon: ScrollIcon,
-		},
-		{
-			title: 'Transactions',
-			url: '/transactions',
-			icon: HandCoinsIcon,
-		},
-		{
-			title: 'Dividends',
-			url: '/dividends',
-			icon: PercentIcon,
-		},
-	],
-	Explore: [
-		{
-			title: 'Assets',
-			url: '/assets',
-			icon: ScrollIcon,
-		},
-		{
-			title: 'Exchanges',
-			url: '/exchanges',
-			icon: GlobeIcon,
-		},
-		{
-			title: 'Currencies',
-			url: '/currencies',
-			icon: DollarSignIcon,
-		},
-		{
-			title: 'Industries',
-			url: '/industries',
-			icon: FactoryIcon,
-		},
-		{
-			title: 'Sectors',
-			url: '/sectors',
-			icon: BriefcaseBusinessIcon,
 		},
 	],
 } satisfies Record<string, NavItem[]>

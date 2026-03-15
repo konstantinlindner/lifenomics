@@ -2,15 +2,14 @@ import { useState } from 'react'
 
 import { type UserSignIn, userSignIn } from '@lifenomics/shared/schemas'
 
-import { isTRPCClientError, trpc } from '~/clients'
 import { log } from '~/helpers'
 import { FormField, FormItem } from '~/providers'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { useRouter } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { authClient } from '~/lib/auth-client'
 
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 
@@ -28,7 +27,6 @@ export function SignInForm() {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 	const [showPassword, setShowPassword] = useState(false)
-	const signIn = useMutation(trpc.user.signIn.mutationOptions())
 
 	const form = useForm<UserSignIn>({
 		resolver: zodResolver(userSignIn),
@@ -41,20 +39,21 @@ export function SignInForm() {
 	async function handleSignIn(values: UserSignIn) {
 		try {
 			setIsLoading(true)
-			await signIn.mutateAsync({
+			const { error } = await authClient.signIn.email({
 				email: values.email,
 				password: values.password,
+				callbackURL: '/',
 			})
+
+			if (error) {
+				toast.error(error.message ?? 'Sign in failed')
+				return
+			}
+
 			await router.invalidate()
 			window.location.href = '/'
 		} catch (error) {
 			log(error)
-
-			if (isTRPCClientError(error)) {
-				toast.error(error.message)
-				return
-			}
-
 			toast.error('Something went wrong, please try again')
 		} finally {
 			setIsLoading(false)
@@ -117,7 +116,7 @@ export function SignInForm() {
 										onClick={() => {
 											setShowPassword(!showPassword)
 										}}
-										className='text-secondary hover:text-primary absolute right-3 top-1/2 -translate-y-1/2 transition-colors duration-200'
+										className='absolute top-1/2 right-3 -translate-y-1/2 text-secondary transition-colors duration-200 hover:text-primary'
 									>
 										{showPassword ?
 											<EyeOffIcon className='size-4' />
@@ -130,14 +129,13 @@ export function SignInForm() {
 					)}
 				/>
 
-				{/* Forgot password link */}
 				<div className='text-right'>
-					<a
-						href='#'
-						className='text-secondary hover:text-primary text-sm transition-colors duration-200'
+					<Link
+						to='/forgot-password'
+						className='text-sm text-secondary transition-colors duration-200 hover:text-primary'
 					>
 						Forgot your password?
-					</a>
+					</Link>
 				</div>
 
 				<Button disabled={isLoading} className='w-full' type='submit'>

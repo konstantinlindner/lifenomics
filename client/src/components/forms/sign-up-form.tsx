@@ -2,15 +2,14 @@ import { useState } from 'react'
 
 import { type UserSignUp, userSignUp } from '@lifenomics/shared/schemas'
 
-import { isTRPCClientError, trpc } from '~/clients'
 import { log } from '~/helpers'
 import { FormField, FormItem } from '~/providers'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { authClient } from '~/lib/auth-client'
 
 import {
 	Button,
@@ -25,7 +24,6 @@ import { LoadingIndicator } from '~/components'
 export function SignUpForm() {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
-	const signUp = useMutation(trpc.user.signUp.mutationOptions())
 
 	const form = useForm<UserSignUp>({
 		resolver: zodResolver(userSignUp),
@@ -40,22 +38,30 @@ export function SignUpForm() {
 	async function handleSignUp(values: UserSignUp) {
 		try {
 			setIsLoading(true)
-			await signUp.mutateAsync(values)
+			const { error } = await authClient.signUp.email({
+				name: `${values.firstName} ${values.lastName}`.trim(),
+				email: values.email,
+				password: values.password,
+				firstName: values.firstName,
+				lastName: values.lastName,
+				callbackURL: '/',
+			})
+
+			if (error) {
+				toast.error(error.message ?? 'Sign up failed')
+				return
+			}
+
 			await router.invalidate()
 			window.location.href = '/'
 		} catch (error) {
 			log(error)
-
-			if (isTRPCClientError(error)) {
-				toast.error(error.message)
-				return
-			}
-
 			toast.error('Something went wrong, please try again')
 		} finally {
 			setIsLoading(false)
 		}
 	}
+
 	return (
 		<FormProvider {...form}>
 			<form
